@@ -1,7 +1,7 @@
-from .person import Person
+from .room import Room
 
 
-class Staff(Person):
+class LivingSpace(Room):
     """Class fellow that inherits class Person."""
 
     def __init__(self):
