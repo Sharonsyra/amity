@@ -35,3 +35,9 @@ class Amity():
 
     def print_people_and_their_allocations(self):
         pass
+
+    def save_state(self):
+        pass
+
+    def load_state(self):
+        pass
