@@ -1,7 +1,43 @@
-class Amity():
+# from app.office import Office
+from office import Office
+from living_space import LivingSpace
+from fellow import Fellow
+from staff import Staff
 
-    def create_room(self, list_of_rooms, room_type):
-        pass
+class Amity():
+    "Amity class has functions that create rooms, add people, allocate people to rooms, reallocate people to different rooms, load people and print allocated and unallocated people"
+
+    room = {
+        "rooms": [],
+        "office": [],
+        "livingspace": [],
+        "office_waiting_list": [],
+        "living_space_waiting_list": []
+    }
+
+    person = {
+        "people": [],
+        "staff": [],
+        "fellow": []
+    }
+    def create_room(self, room_list, room_type):
+        for room in room_list:
+            if room in [i.room_name for i in self.room["rooms"]]:
+                print("cannot create room {} . The room already exists.".format(room))
+            else:
+                if room_type == "office":
+                    office = Office(room)
+                    self.room['rooms'].append(office)
+                    # self.room['office'][office] = []
+                    print("Office {} of id - {} successfully created".format(office.room_name, office.room_id))
+
+                elif room_type == "living_space":
+                    livingspace = LivingSpace(room)
+                    self.room['rooms'].append(livingspace)
+                    # self.room['livingspace'][livingspace] = []
+                    print("Living Space {} of id - {} successfully created".format(livingspace.room_name, livingspace.room_id))
+                else:
+                    print("Invalid room type. Use office or livingspace only")
 
     def add_person(self, first_name, second_name, type, wants_accomodation):
         pass
@@ -41,3 +77,6 @@ class Amity():
 
     def load_state(self, *args):
         pass
+amity = Amity()
+amity.create_room(["Hogwarts", "Narnia"], "office")
+amity.create_room(["ddd"], "living_space")
