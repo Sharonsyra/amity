@@ -11,26 +11,19 @@ class AmityTestCase(unittest.TestCase):
     def setUp(self):
         self.amity = Amity()
 
-    #... Tests for create_room ...#
+    # #... Tests for create_room ...#
+    #
+    # def test_create_room_add_room_successfully(self):
+    #     """ Test that room was created successfully """
+    #     room = "Hogwarts"
+    #     self.assertIn(room, self.amity.get_rooms(self.amity.room["rooms"]))
+    #
+    # def test_create_room_duplicates(self):
+    #     """ Test that room can only be added once """
+    #     new_room = "Ofe"
+    #     self.assertNotIn(new_room, self.amity.get_rooms(self.amity.room['rooms']))
 
-    def test_create_room_add_living_space(self):
-        """ Test that living space was created successfully """
-        self.assertEqual(self.amity.create_room(["Maathai", "Tutu", " Lorup"], "LivingSpace"), "Living space has been created")
-
-    def test_create_room_add_office(self):
-        """ Test that office was created successfully """
-        self.assertEqual(self.amity.create_room(["PinkRoom", "ConferenceCentre", "BlueRoom"], "Office"), "Office has been created")
-
-    def test_create_room_duplicates(self):
-        """ Test that room can only be added once """
-        self.amity.create_room("Maathai", "LivingSpace")
-        self.assertEqual(self.amity.create_room("Maathai", "LivingSpace"), "Room already exists. Create a different room!")
-
-    def test_create_room_wrong_room_type(self):
-        """ Test that room type can only be office or living space """
-        self.assertEqual(self.amity.create_room("Conference", "Business"), "Business is not a room type! Please try Living Space or Office")
-
-    #... Tests for add_person ...#
+         #... Tests for add_person ...#
 
     def test_add_person_add_fellow(self):
         """ Test that fellow was added successfully """
@@ -97,83 +90,83 @@ class AmityTestCase(unittest.TestCase):
 
     #... Tests for realocate person ...#
 
-    def test_reallocate_person_reallocates_person(self):
-        """ Tests that person is reallocated """
-        self.amity.create_room("PinkRoom", "Office")
-        self.amity.create_room("ConferenceCentre", "Office")
-        self.assertEqual(self.amity.reallocate_person("F1", "PinkRoom"), "Person was reallocated successfully!")
-    
-    def test_reallocate_person_cannot_reassign__person_to_the_same_room(self):
-        """ Tests that person is not reallocated to the same room """
-        self.amity.reallocate_person("F1", "Maathai")
-        self.assertEqual(self.amity.reallocate_person("F1", "Maathai"), "Person cannot be reallocated to the same room")
-    
-    def test_reallocate_person_rejects_move_to_room_with_wrong_person_id(self):
-        """ Tests that a person cannot be reallocated using a wrong user id """
-        self.amity.add_person("Robley", "Gori", "Fellow", "F1")
-        self.assertEqual(self.amity.reallocate_person("F9", "Tutu"), "Person cannot be reallocated with wrong person id")
-        
-    #... Tests for load people ...#
-
-    def test_load_people_loads_people_from_txt_file(self):
-        """ Tests that people are successfully loaded from a txt file """
-        self.assertEqual(self.amity.load_people("people.txt"), "People successfully added from txt file")
-
-    #... Tests for print allocations ...#
-
-    def test_print_allocations_prints_allocations_to_screen(self):
-        """To test if method prints allocations to screen."""
-        self.amity.create_room("PinkRoom", "Office")
-        self.amity.add_person("Oliver", "Munala", "Fellow", "N")
-        self.amity.add_person("Jus", "Machungwa", "Fellow", "N")
-        self.amity.create_room("Maathai", "LivingSpace")
-        self.amity.add_person("Jackline", "Maina", "Fellow","N")
-        self.assertEqual(self.amity.print_allocations("Rooms"), "PinkRoom - Oliver Munala  Jus Machungwa   Maathai - Jackline Maina")
-
-    def test_print_allocations_prints_allocations_to_txt_file(self):
-        """To test if method prints allocations to txt file."""
-        self.assertEqual(self.amity.print_allocations("allocations.txt"), "Successfully dumped to file.")
-
-    #... Tests for unallocated rooms ...#
-
-    def test_print_unallocated_prints_unallocated_people_to_screen(self):
-        """To test if method prints unallocated people to screen."""
-        self.amity.create_room("PinkRoom", "Office")
-        self.amity.add_person("Oliver", "Munala", "Fellow", "Y")
-        self.amity.add_person("Jus", "Machungwa", "Fellow", "Y")
-        self.amity.create_room("Maathai", "LivingSpace")
-        self.amity.add_person("Jackline", "Maina", "Fellow", "Y")
-        self.assertEqual(self.amity.print_unallocated(), "PinkRoom - Oliver Munala  Jus Machungwa   Maathai - Jackline Maina")
-
-    def test_print_unallocated_prints_unallocated_people_to_txt_file(self):
-        """To test if method prints unallocated people to txt file."""
-        self.assertEqual(self.amity.print_unallocated("unallocated.txt"), "Successfully dumped unallocated people to file.")
-
-    #... Tests for print room ...#
-
-    def test_print_room_prints_all_people_in_room_name_to_screen(self):
-        """ It tests that all people in a room name are printed to screen """
-        self.amity.create_room("Tutu", "LivingSpace")
-        self.amity.add_person("Robley", "Gori", "Fellow", "Y")
-        self.amity.add_person("Jackline", "Maina", "Fellow", "Y")
-        self.amity.add_person("Angela", "Mutava", "Fellow", "Y")
-        self.amity.add_person("Rose", "Wambui", "Fellow", "Y")
-        self.assertEqual(self.amity.print_room("Tutu"), "\n Tutu: \n Robley Gori \n Jackline Maina  \n  Angela Mutava  \n Rose Wambui")
-
-    #... Tests for save state ...#
-
-    def test_save_state_adds_data_to_database(self):
-        """ Test to affirm that data from the application is successfully added to the database """
-
-        self.assertEqual(self.amity.save_state("amity.db"), "Data successfully added to database")
-
-    #... Tests for load state ...#
-
-    def test_load_state_successfully_loads_data_from_database(self):
-        """ Test that data is successfully loaded from database """
-        self.assertEqual(self.amity.load_state("amity.db"), "Data successfully loaded from database")
-
-
-if __name__ == '__main__':
-    unittest.main()
-
+#     def test_reallocate_person_reallocates_person(self):
+#         """ Tests that person is reallocated """
+#         self.amity.create_room("PinkRoom", "Office")
+#         self.amity.create_room("ConferenceCentre", "Office")
+#         self.assertEqual(self.amity.reallocate_person("F1", "PinkRoom"), "Person was reallocated successfully!")
+#
+#     def test_reallocate_person_cannot_reassign__person_to_the_same_room(self):
+#         """ Tests that person is not reallocated to the same room """
+#         self.amity.reallocate_person("F1", "Maathai")
+#         self.assertEqual(self.amity.reallocate_person("F1", "Maathai"), "Person cannot be reallocated to the same room")
+#
+#     def test_reallocate_person_rejects_move_to_room_with_wrong_person_id(self):
+#         """ Tests that a person cannot be reallocated using a wrong user id """
+#         self.amity.add_person("Robley", "Gori", "Fellow", "F1")
+#         self.assertEqual(self.amity.reallocate_person("F9", "Tutu"), "Person cannot be reallocated with wrong person id")
+#
+#     #... Tests for load people ...#
+#
+#     def test_load_people_loads_people_from_txt_file(self):
+#         """ Tests that people are successfully loaded from a txt file """
+#         self.assertEqual(self.amity.load_people("people.txt"), "People successfully added from txt file")
+#
+#     #... Tests for print allocations ...#
+#
+#     def test_print_allocations_prints_allocations_to_screen(self):
+#         """To test if method prints allocations to screen."""
+#         self.amity.create_room("PinkRoom", "Office")
+#         self.amity.add_person("Oliver", "Munala", "Fellow", "N")
+#         self.amity.add_person("Jus", "Machungwa", "Fellow", "N")
+#         self.amity.create_room("Maathai", "LivingSpace")
+#         self.amity.add_person("Jackline", "Maina", "Fellow","N")
+#         self.assertEqual(self.amity.print_allocations("Rooms"), "PinkRoom - Oliver Munala  Jus Machungwa   Maathai - Jackline Maina")
+#
+#     def test_print_allocations_prints_allocations_to_txt_file(self):
+#         """To test if method prints allocations to txt file."""
+#         self.assertEqual(self.amity.print_allocations("allocations.txt"), "Successfully dumped to file.")
+#
+#     #... Tests for unallocated rooms ...#
+#
+#     def test_print_unallocated_prints_unallocated_people_to_screen(self):
+#         """To test if method prints unallocated people to screen."""
+#         self.amity.create_room("PinkRoom", "Office")
+#         self.amity.add_person("Oliver", "Munala", "Fellow", "Y")
+#         self.amity.add_person("Jus", "Machungwa", "Fellow", "Y")
+#         self.amity.create_room("Maathai", "LivingSpace")
+#         self.amity.add_person("Jackline", "Maina", "Fellow", "Y")
+#         self.assertEqual(self.amity.print_unallocated(), "PinkRoom - Oliver Munala  Jus Machungwa   Maathai - Jackline Maina")
+#
+#     def test_print_unallocated_prints_unallocated_people_to_txt_file(self):
+#         """To test if method prints unallocated people to txt file."""
+#         self.assertEqual(self.amity.print_unallocated("unallocated.txt"), "Successfully dumped unallocated people to file.")
+#
+#     #... Tests for print room ...#
+#
+#     def test_print_room_prints_all_people_in_room_name_to_screen(self):
+#         """ It tests that all people in a room name are printed to screen """
+#         self.amity.create_room("Tutu", "LivingSpace")
+#         self.amity.add_person("Robley", "Gori", "Fellow", "Y")
+#         self.amity.add_person("Jackline", "Maina", "Fellow", "Y")
+#         self.amity.add_person("Angela", "Mutava", "Fellow", "Y")
+#         self.amity.add_person("Rose", "Wambui", "Fellow", "Y")
+#         self.assertEqual(self.amity.print_room("Tutu"), "\n Tutu: \n Robley Gori \n Jackline Maina  \n  Angela Mutava  \n Rose Wambui")
+#
+#     #... Tests for save state ...#
+#
+#     def test_save_state_adds_data_to_database(self):
+#         """ Test to affirm that data from the application is successfully added to the database """
+#
+#         self.assertEqual(self.amity.save_state("amity.db"), "Data successfully added to database")
+#
+#     #... Tests for load state ...#
+#
+#     def test_load_state_successfully_loads_data_from_database(self):
+#         """ Test that data is successfully loaded from database """
+#         self.assertEqual(self.amity.load_state("amity.db"), "Data successfully loaded from database")
+#
+#
+# if __name__ == '__main__':
+#     unittest.main()
+#
