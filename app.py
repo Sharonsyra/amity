@@ -1,12 +1,20 @@
-#!/usr/bin/env python
-"""
+"""#!/usr/bin/env python .
 This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 Usage:
-    my_program tcp <host> <port> [--timeout=<seconds>]
-    my_program serial <port> [--baud=<n>] [--timeout=<seconds>]
-    my_program (-i | --interactive)
-    my_program (-h | --help | --version)
+    amity create_room (living_space|office) <room_name>...
+    amity add_person (Fellow|Staff) <first_name> <last_name> [--accomodation=value]
+    amity print_room <room_name>
+    amity print_unallocated [--file=text_file]
+    amity print_allocations [--file=text_file]
+    amity reallocate_person <person_id> <new_room>
+    amity save_state [--db=sqlite_database]
+    amity load_state <db>
+    amity load_state <text_file>
+    amity print_all_rooms
+    amity print_all_people
+    amity (-i | --interactive)
+    amity (-h | --help | --version)
 Options:
     -i, --interactive  Interactive Mode
     -h, --help  Show this screen and exit.
@@ -16,13 +24,17 @@ Options:
 import sys
 import cmd
 from docopt import docopt, DocoptExit
+from pyfiglet import figlet_format
+from termcolor import cprint
+
+from app import amity
 
 
 def docopt_cmd(func):
+    """To provide a decorator used to simplify the try/except block.
+    and pass the result of the docopt parsing to the called action.
     """
-    This decorator is used to simplify the try/except block and pass the result
-    of the docopt parsing to the called action.
-    """
+
     def fn(self, arg):
         try:
             opt = docopt(fn.__doc__, arg)
@@ -49,26 +61,93 @@ def docopt_cmd(func):
     return fn
 
 
-class MyInteractive (cmd.Cmd):
-    intro = 'Welcome to my interactive program!' \
-        + ' (type help for a list of commands.)'
-    prompt = '(my_program) '
+class Amity(cmd.Cmd):
+    """Define contain methods/commands for docopt interface on terminal."""
+
+    def intro():
+        """Contain introductory message when in interactive mode."""
+        cprint(figlet_format("Amity", font="univers"), "blue")
+
+    intro = intro()
+    prompt = '(Amity) '
     file = None
 
     @docopt_cmd
-    def do_tcp(self, arg):
-        """Usage: tcp <host> <port> [--timeout=<seconds>]"""
+    def do_create_room(self, args):
+        """Usage: create_room (living_space|office) <room_name>..."""
+        room_type = None
+        if args["office"]:
+            room_type = "office"
+        else:
+            room_type = "living_space"
 
-        print(arg)
+        amity.create_room(room_type, args["<room_name>"])
 
     @docopt_cmd
-    def do_serial(self, arg):
-        """Usage: serial <port> [--baud=<n>] [--timeout=<seconds>]
-Options:
-    --baud=<n>  Baudrate [default: 9600]
-        """
+    def do_add_person(self, args):
+        """Usage: add_person (Fellow|Staff) <first_name> <last_name> [--accomodation=value]"""
+        person_type = None
+        if args["Fellow"]:
+            person_type = "Fellow"
+        else:
+            person_type = "Staff"
+        first_name = args["<first_name>"]
+        last_name = args["<last_name>"]
+        amity.add_person(person_type, first_name,
+                         last_name, args["--accomodation"])
 
-        print(arg)
+    @docopt_cmd
+    def do_print_room(self, args):
+        """Usage: print_room <room_name>"""
+        room_name = args["<room_name>"]
+        amity.print_room(room_name)
+
+    @docopt_cmd
+    def do_print_unallocated(self, args):
+        """Usage: print_unallocated [--file=text_file]"""
+        amity.print_unallocated(args['--file'])
+
+    @docopt_cmd
+    def do_print_allocations(self, args):
+        """Usage: print_allocations [--file=text_file]"""
+        amity.print_allocations(args["--file"])
+
+    @docopt_cmd
+    def do_reallocate_person(self, args):
+        """Usage: reallocate_person <person_id> <new_room>"""
+        if args["<person_id>"].isalpha():
+            print("person id cannot be string")
+            return
+        else:
+            (amity.reallocate_person(int(args['<person_id>']),
+                                     args['<new_room>']))
+
+    @docopt_cmd
+    def do_save_state(self, args):
+        """Usage: save_state [--db=sqlite_database]"""
+        # print(args['--db'])
+        amity.save_state(args['--db'])
+
+    @docopt_cmd
+    def do_load_state(self, args):
+        """Usage: load_state <db>"""
+        db_name = args["<db>"]
+        amity.load_state(db_name)
+
+    @docopt_cmd
+    def do_load_people(self, args):
+        """Usage: load_state <text_file>"""
+        amity.load_people(args["<text_file>"])
+
+    @docopt_cmd
+    def do_print_all_rooms(self, arg):
+        """Usage: print_all_rooms"""
+        amity.print_all_rooms()
+
+    @docopt_cmd
+    def do_print_all_people(self, arg):
+        """Usage: print_all_people"""
+        amity.print_all_people()
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
@@ -76,9 +155,10 @@ Options:
         print('Good Bye!')
         exit()
 
+
 opt = docopt(__doc__, sys.argv[1:])
 
 if opt['--interactive']:
-    MyInteractive().cmdloop()
+    Amity().cmdloop()
 
 print(opt)
