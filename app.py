@@ -1,9 +1,9 @@
-"""#!/usr/bin/env python .
+"""
 This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 Usage:
     amity create_room (living_space|office) <room_name>...
-    amity add_person (Fellow|Staff) <first_name> <last_name> [--accomodation=value]
+    amity add_person (fellow|staff) <first_name> <last_name> [<wants_accommodation>]
     amity print_room <room_name>
     amity print_unallocated [--file=text_file]
     amity print_allocations [--file=text_file]
@@ -27,7 +27,9 @@ from docopt import docopt, DocoptExit
 from pyfiglet import figlet_format
 from termcolor import cprint
 
-from app import amity
+from app.amity import Amity
+
+amity = Amity()
 
 
 def docopt_cmd(func):
@@ -67,6 +69,7 @@ class Amity(cmd.Cmd):
     def intro():
         """Contain introductory message when in interactive mode."""
         cprint(figlet_format("Amity", font="univers"), "blue")
+        cprint(__doc__)
 
     intro = intro()
     prompt = '(Amity) '
@@ -81,20 +84,19 @@ class Amity(cmd.Cmd):
         else:
             room_type = "living_space"
 
-        amity.create_room(room_type, args["<room_name>"])
+        amity.create_room(args["<room_name>"], room_type)
 
     @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person (Fellow|Staff) <first_name> <last_name> [--accomodation=value]"""
+        """Usage: add_person (fellow|staff) <first_name> <last_name> [<wants_accommodation>]"""
         person_type = None
-        if args["Fellow"]:
-            person_type = "Fellow"
-        else:
-            person_type = "Staff"
+        if args["fellow"]:
+            person_type = "fellow"
+        elif args["staff"]:
+            person_type = "staff"
         first_name = args["<first_name>"]
         last_name = args["<last_name>"]
-        amity.add_person(person_type, first_name,
-                         last_name, args["--accomodation"])
+        amity.add_person(first_name, last_name, person_type, args["<wants_accommodation>"])
 
     @docopt_cmd
     def do_print_room(self, args):
