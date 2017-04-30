@@ -1,5 +1,5 @@
+import os
 import random
-from termcolor import cprint
 
 from office import Office
 from living_space import LivingSpace
@@ -62,8 +62,6 @@ class Amity(object):
             elif len(room.room_members) >= room.room_capacity:
                 if room in self.available_offices:
                     self.available_offices.remove(room)
-                    self.full_offices.append(room)
-
         # Get the list of available living spaces
         for room in self.room["living_space"]:
             if len(room.room_members) < room.room_capacity:
@@ -72,8 +70,6 @@ class Amity(object):
             elif len(room.room_members) == room.room_capacity:
                 if room in self.available_offices:
                     self.available_offices.remove(room)
-                    self.full_living_spaces.append(room)
-
         if person_type == "staff":
             staff = Staff(first_name, last_name)
             # add staff to people
@@ -119,113 +115,103 @@ class Amity(object):
     def reallocate_person(self, person_id, room_name):
         pass
 
-    def load_people(self, args):
-        """Add people to rooms from a txt file"""
-        filename = args["<filename>"]
-        with open(filename, 'r') as my_file:
-            people = my_file.readlines()
-            for p in people:
-                p = p.split()
-                if p:
-                    first_name = p[0]
-                    last_name = p[1]
-                    if p[2] == "FELLOW":
-                        is_staff = False
-                        is_fellow = True
-                    else:
-                        is_staff = True
-                        is_fellow = False
-                    if len(p) == 4:
-                        wants_accommodation = p[3]
-                    else:
-                        wants_accommodation = None
+    # def load_people(self, text_file):
+    #     """To fetch data from text file to and load into amity."""
+    #     if os.path.isfile(text_file):
+    #         with open(text_file, "r") as f:
+    #             output = f.read()
+    #             raw_data = output.split("\n")
+    #             for i in raw_data:
+    #                 row = i.split(" ")
+    #                 if len(row) > 3:
+    #                     self.add_person("Y", row[0], row[1],
+    #                                     row[2].capitalize())
+    #                 else:
+    #                     self.add_person("N", row[0], row[1],
+    #                                     row[2].capitalize())
+    #         return "File found"
+    #     else:
+    #         print("File does not exist.")
+    #         return "File does not exist."
 
-                    self.add_person({
-                        "<first_name>": first_name,
-                        "<last_name>": last_name,
-                        "<wants_accommodation>": wants_accommodation,
-                        "Fellow": is_fellow,
-                        "Staff": is_staff
-                    })
-
-    def print_allocations(self, args):
-        """Print list of occupants per room to the  \
-        screen and optionally to a text file"""
-        print self.space
-        output = ""
-        for r in self.room["rooms"]:
-            output += r.room_name + "\n"
-            output += "-" * 50 + "\n"
-            if r.room_members:
-                output += ", ".join(p.room_name for p in r.room_members) + "\n"
-                output += self.space + "\n"
-            else:
-                output += "This room has no occupants.\n"
-                output += self.space + "\n"
-        if not self.room["rooms"]:
-            output += "There are no rooms in the system.\n"
-            output += "Add a room using the create_room command" \
-                      " and try again.\n"
-        print output
-        # if args["--o"]:
-        #     with open(args["--o"], 'wt') as f:
-        #         f.write(output)
-        #         print "The list of allocations has been saved " \
-        #               "to the following file: "
-        #         print args["--o"]
-        #         print self.space
-
-    def print_unallocated(self, args):
-        """Print list of unallocated people to the \
-        screen and optionally to a text file"""
-        print self.space
-        output = ""
-        output += "Unallocated People\n"
-        output += "-" * 50 + "\n"
-        for p in self.person["people"]:
-            if p not in self.living_space_waiting_list and self.office_waiting_list:
-                output += p.name + "\n"
-                if p not in self.unallocated_people:
-                    self.unallocated_people.append(p)
-        if not self.person["people"]:
-            output += "There are no people in the system.\n"
-            output += "Add a person using the add_person command" \
-                      " and try again.\n"
-        elif not self.office_waiting_list and self.living_space_waiting_list:
-            output += "There are no unallocated people in the system.\n"
-        print output
-        # if args["--o"]:
-        #     with open(args["--o"], 'wt') as f:
-        #         f.write(output)
-        #         print "The list of unallocated people has been saved " \
-        #               "to the following file: "
-        #         print args["--o"]
-        #         print spacer
-
-    def print_room(self, args):
-        """Print the names of all the people in room_name on the screen"""
-        print self.space
-        room_name = args["<room_name>"]
-        if room_name not in [r.room_name for r in self.room["rooms"]]:
-            print "The room you have entered does not exist."
-            print "Please try again."
-            print self.space
-        for r in self.room["rooms"]:
-            if r.room_name == room_name:
-                room = r
-                print room.room_name
-                print "-" * 50
-                if room.occupants:
-                    for p in room.occupants:
-                        print p.name
-                else:
-                    print "This room has no occupants."
-                print self.space
-
-        pass
-
-    def save_state(self, *args):
-        pass
-
-    def load_state(self, *args):
-        pass
+    # def print_allocations(self, args):
+    #     """Print list of occupants per room to the  \
+    #     screen and optionally to a text file"""
+    #     print self.space
+    #     output = ""
+    #     for r in self.room["rooms"]:
+    #         output += r.room_name + "\n"
+    #         output += "-" * 50 + "\n"
+    #         if r.room_members:
+    #             output += ", ".join(p.room_name for p in r.room_members) + "\n"
+    #             output += self.space + "\n"
+    #         else:
+    #             output += "This room has no occupants.\n"
+    #             output += self.space + "\n"
+    #     if not self.room["rooms"]:
+    #         output += "There are no rooms in the system.\n"
+    #         output += "Add a room using the create_room command" \
+    #                   " and try again.\n"
+    #     print output
+    #     # if args["--o"]:
+    #     #     with open(args["--o"], 'wt') as f:
+    #     #         f.write(output)
+    #     #         print "The list of allocations has been saved " \
+    #     #               "to the following file: "
+    #     #         print args["--o"]
+    #     #         print self.space
+    #
+    # def print_unallocated(self, args):
+    #     """Print list of unallocated people to the \
+    #     screen and optionally to a text file"""
+    #     print self.space
+    #     output = ""
+    #     output += "Unallocated People\n"
+    #     output += "-" * 50 + "\n"
+    #     for p in self.person["people"]:
+    #         if p not in self.living_space_waiting_list and self.office_waiting_list:
+    #             output += p.name + "\n"
+    #             if p not in self.unallocated_people:
+    #                 self.unallocated_people.append(p)
+    #     if not self.person["people"]:
+    #         output += "There are no people in the system.\n"
+    #         output += "Add a person using the add_person command" \
+    #                   " and try again.\n"
+    #     elif not self.office_waiting_list and self.living_space_waiting_list:
+    #         output += "There are no unallocated people in the system.\n"
+    #     print output
+    #     # if args["--o"]:
+    #     #     with open(args["--o"], 'wt') as f:
+    #     #         f.write(output)
+    #     #         print "The list of unallocated people has been saved " \
+    #     #               "to the following file: "
+    #     #         print args["--o"]
+    #     #         print spacer
+    #
+    # def print_room(self, args):
+    #     """Print the names of all the people in room_name on the screen"""
+    #     print self.space
+    #     room_name = args["<room_name>"]
+    #     if room_name not in [r.room_name for r in self.room["rooms"]]:
+    #         print "The room you have entered does not exist."
+    #         print "Please try again."
+    #         print self.space
+    #     for r in self.room["rooms"]:
+    #         if r.room_name == room_name:
+    #             room = r
+    #             print room.room_name
+    #             print "-" * 50
+    #             if room.occupants:
+    #                 for p in room.occupants:
+    #                     print p.name
+    #             else:
+    #                 print "This room has no occupants."
+    #             print self.space
+    #
+    #     pass
+    #
+    # def save_state(self, *args):
+    #     pass
+    #
+    # def load_state(self, *args):
+    #     pass

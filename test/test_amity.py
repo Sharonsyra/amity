@@ -108,11 +108,11 @@ class AmityTestCase(unittest.TestCase):
 #
 #     #... Tests for load people ...#
 #
-#     def test_load_people_loads_people_from_txt_file(self):
-#         """ Tests that people are successfully loaded from a txt file """
-#         self.assertEqual(self.amity.load_people("people.txt"), "People successfully added from txt file")
-#
-#     #... Tests for print allocations ...#
+    def test_load_people_loads_people_from_txt_file(self):
+        """ Tests that people are successfully loaded from a txt file """
+        self.assertEqual(self.amity.load_people("people.txt"), "People successfully added from txt file")
+
+    #... Tests for print allocations ...#
 #
 #     def test_print_allocations_prints_allocations_to_screen(self):
 #         """To test if method prints allocations to screen."""
