@@ -10,35 +10,63 @@ class AmityTestCase(unittest.TestCase):
 
     def setUp(self):
         self.amity = Amity()
+        self.amity.rooms = []
+        self.amity.available_rooms = []
+        self.amity.offices = []
+        self.amity.available_offices = []
+        self.amity.living_spaces = []
+        self.amity.available_living_spaces = []
+        self.amity.people = []
+        self.amity.allocated_people = []
+        self.amity.waiting_list = []
+        self.amity.office_waiting_list = []
+        self.amity.living_space_waiting_list = []
+        self.amity.fellows = []
+        self.amity.allocated_fellows = []
+        self.amity.staff = []
+        self.amity.allocated_staff = []
 
-    # #... Tests for create_room ...#
-    #
-    # def test_create_room_add_room_successfully(self):
-    #     """ Test that room was created successfully """
-    #     room = "Hogwarts"
-    #     self.assertIn(room, self.amity.get_rooms(self.amity.room["rooms"]))
-    #
-    # def test_create_room_duplicates(self):
-    #     """ Test that room can only be added once """
-    #     new_room = "Ofe"
-    #     self.assertNotIn(new_room, self.amity.get_rooms(self.amity.room['rooms']))
+    #... Tests for create_room ...#
 
-         #... Tests for add_person ...#
+    def test_create_room_add_room_successfully(self):
+        """ Test that room was created successfully """
+        self.amity.create_room(["Hogwarts"], "office")
+        self.assertEqual("Hogwarts", self.amity.rooms[0].room_name)
+
+    def test_create_room_duplicates(self):
+        """ Test that room can only be added once """
+        self.amity.create_room(["Hogwarts"], "office")
+        self.assertIn("Hogwarts", [i.room_name for i in self.amity.rooms])
+        length_of_rooms = len(self.amity.rooms)
+        self.amity.create_room(["Hogwarts"], "office")
+        self.assertEqual(len(self.amity.rooms), length_of_rooms)
+
+    #... Tests for add_person ...#
 
     def test_add_person_add_fellow(self):
         """ Test that fellow was added successfully """
-        self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Fellow added successfully!")
+
+        self.amity.add_person("Robley", "Gori", "fellow", "Y")
+        length_of_fellows = len(self.amity.fellows)
+        self.assertEqual(len(self.amity.fellows), length_of_fellows)
 
     def test_add_person_add_staff(self):
         """ Test that staff was added successfully """
-        self.assertEqual(self.amity.add_person("Christina", "Sass", "Staff", "N"), "Staff added successfully!")
+
+        self.amity.add_person("Robley", "Gori", "staff", "N")
+        length_of_staff = len(self.amity.fellows)
+        self.assertEqual(len(self.amity.fellows), length_of_staff)
 
     def test_add_person_add_person_to_office(self):
         """ Test that person is successfully added to office """
-        self.amity.create_room("PinkRoom", "Office")
-        self.amity.create_room("ConferenceCentre", "Office")
-        self.amity.create_room("BlueRoom", "Office")
-        self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Person was allocated an office successfully")
+
+        self.amity.create_room("red", "office")
+        self.amity.add_person("Robley", "Gori", "staff", "N")
+        length_of_office =
+        # self.amity.create_room("PinkRoom", "Office")
+        # self.amity.create_room("ConferenceCentre", "Office")
+        # self.amity.create_room("BlueRoom", "Office")
+        # self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Person was allocated an office successfully")
 
     def test_add_person_add_fellow_to_living_space(self):
         """ Test that fellow is successfully added to living space """
@@ -108,14 +136,14 @@ class AmityTestCase(unittest.TestCase):
 #
 #     #... Tests for load people ...#
 #
-    def test_load_people_loads_people_from_txt_file(self):
-        """ Tests that people are successfully loaded from a txt file """
-        self.assertEqual(self.amity.load_people("people.txt"), "People successfully added from txt file")
-
-    #... Tests for print allocations ...#
+#     def test_load_people_loads_people_from_txt_file(self):
+#         """ Tests that people are successfully loaded from a txt file """
+#         self.assertEqual(self.amity.load_people('/Users/sharonsyra/Desktop/project1/amity/people.txt'), "People successfully added from txt file")
 #
-#     def test_print_allocations_prints_allocations_to_screen(self):
-#         """To test if method prints allocations to screen."""
+#     #... Tests for print allocations ...#
+# #
+# #     def test_print_allocations_prints_allocations_to_screen(self):
+# #         """To test if method prints allocations to screen."""
 #         self.amity.create_room("PinkRoom", "Office")
 #         self.amity.add_person("Oliver", "Munala", "Fellow", "N")
 #         self.amity.add_person("Jus", "Machungwa", "Fellow", "N")
@@ -167,6 +195,6 @@ class AmityTestCase(unittest.TestCase):
 #         self.assertEqual(self.amity.load_state("amity.db"), "Data successfully loaded from database")
 #
 #
-# if __name__ == '__main__':
-#     unittest.main()
-#
+if __name__ == '__main__':
+    unittest.main()
+

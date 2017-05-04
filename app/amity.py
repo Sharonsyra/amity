@@ -91,13 +91,41 @@ class Amity(object):
                     self.living_space_waiting_list.append(fellow)
                     print("{} {} has been added to the living space waiting list".format(fellow.first_name,
                                                                                          fellow.last_name))
-
         return self
 
+    def load_people(self, txt_file):
+        with open(txt_file, 'r') as person_file:
+            for line in person_file:
+                first_name = line.split()[0]
+                last_name = line.split()[1]
+                person_type = line.split()[2].lower()
+                if len(line.split()) == 4:
+                    wants_accommodation = line.split()[3]
+                else:
+                    wants_accommodation = "N"
+                self.add_person(first_name, last_name, person_type, wants_accommodation)
 
-# new_amity = Amity()
-# new_amity.create_room(["Blue"], "office")
-# new_amity.create_room(["Mara"], "living_space")
+
+
+    def print_allocations(self):
+        for room in new_amity.rooms:
+            print(room.room_name)
+            print(room.room_members)
+            print("")
+        return self
+
+    def print_unallocated(self):
+        for person in self.waiting_list:
+            print(person)
+
+    def print_room(self, room_name):
+        if room_name in [i.room_name for i in self.rooms]:
+            print(i.room_members)
+
+new_amity = Amity()
+
+new_amity.create_room(["Blue"], "office")
+new_amity.create_room(["Mara"], "living_space")
 #
 # new_amity.add_person("Robley", "Gori", "fellow", "Y")
 # new_amity.add_person("Ry", "Gi", "fellow", "N")
@@ -110,8 +138,13 @@ class Amity(object):
 # new_amity.add_person("Robley", "Gori", "fellow", "Y")
 # new_amity.add_person("Robley", "Gori", "fellow", "Y")
 # new_amity.add_person("Rob", "Gori", "staff", "N")
-#
-#
+new_amity.print_allocations()
+new_amity.print_unallocated()
+new_amity.print_room("Mara")
+new_amity.load_people('people.txt')
+new_amity.print_allocations()
+new_amity.print_unallocated()
+# #
 # for room in new_amity.rooms:
 #     print (room.room_name)
 #     print(room.room_members)
