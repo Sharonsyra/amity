@@ -53,18 +53,19 @@ class AmityTestCase(unittest.TestCase):
     def test_add_person_add_staff(self):
         """ Test that staff was added successfully """
 
-        self.amity.add_person("Robley", "Gori", "staff", "N")
+        self.amity.add_person("Robley", "Gori", "staff")
         length_of_staff = len(self.amity.fellows)
         self.assertEqual(len(self.amity.fellows), length_of_staff)
 
     def test_add_person_add_person_to_office(self):
         """ Test that person is successfully added to office """
-
+        initial_people_in_office = len(self.amity.print_allocations())
         self.amity.create_room("red", "office")
         self.amity.add_person("Robley", "Gori", "staff", "N")
-        length_of_office =
-        # self.amity.create_room("PinkRoom", "Office")
-        # self.amity.create_room("ConferenceCentre", "Office")
+        final_length_of_office = len(self.amity.print_allocations())
+        self.assertEqual((initial_people_in_office + 1), final_length_of_office)
+    #     # self.amity.create_room("PinkRoom", "Office")
+    #     # self.amity.create_room("ConferenceCentre", "Office")
         # self.amity.create_room("BlueRoom", "Office")
         # self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Person was allocated an office successfully")
 
@@ -100,7 +101,7 @@ class AmityTestCase(unittest.TestCase):
         self.assertEqual(self.amity.add_person("Jackline", "Maina", "Fellow", "Y"), "Sorry all the living spaces are fully occupied at the moment. You have been added to the waiting list")
 
     def test_add_person_add_fellow_to_living_with_full_office(self):
-        """ Test that fellow can is added to living space even when offices are full """
+        """ Test that fellow is added to living space even when offices are full """
         self.amity.create_room("PinkRoom", "Office")
         self.amity.add_person("Christina", "Sass", "Staff", "N")
         self.amity.add_person("Jeremy", "Johnson", "Staff", "N")
@@ -116,7 +117,7 @@ class AmityTestCase(unittest.TestCase):
 
         self.assertEqual(self.amity.add_person("Wekesa", "Maina", "Fellow", "Y"), "Fellow was assigned a living space successfully. Offices are fully occupied!")
 
-    #... Tests for realocate person ...#
+    #... Tests for reallocate person ...#
 
 #     def test_reallocate_person_reallocates_person(self):
 #         """ Tests that person is reallocated """

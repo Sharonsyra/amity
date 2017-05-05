@@ -114,6 +114,7 @@ class Amity(cmd.Cmd):
         """Usage: print_allocations [--file=text_file]"""
         amity.print_allocations(args["--file"])
 
+
     @docopt_cmd
     def do_reallocate_person(self, args):
         """Usage: reallocate_person <person_id> <new_room>"""
@@ -141,20 +142,10 @@ class Amity(cmd.Cmd):
         """Usage: load_state <text_file>"""
         amity.load_people(args["<text_file>"])
 
-    @docopt_cmd
-    def do_print_all_rooms(self, arg):
-        """Usage: print_all_rooms"""
-        amity.print_all_rooms()
-
-    @docopt_cmd
-    def do_print_all_people(self, arg):
-        """Usage: print_all_people"""
-        amity.print_all_people()
-
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
 
-        print('Good Bye!')
+        print('Ciao Adios!!')
         exit()
 
 

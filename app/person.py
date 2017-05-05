@@ -2,7 +2,7 @@ class Person(object):
     """ Class person adds people to amity """
 
     def __init__(self, first_name, last_name, person_type=None, wants_accommodation="N"):
-        self.p_id = id(self)
+        self.person_id = id(self)
         self.first_name = first_name
         self.last_name = last_name
         self.person_type = person_type
