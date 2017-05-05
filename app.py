@@ -107,12 +107,17 @@ class Amity(cmd.Cmd):
     @docopt_cmd
     def do_print_unallocated(self, args):
         """Usage: print_unallocated [--file=text_file]"""
-        amity.print_unallocated(args['--file'])
+        if args["--file"]:
+            print(args["--file"])
+            amity.print_unallocated(args["--file"])
+        amity.print_unallocated()
 
     @docopt_cmd
     def do_print_allocations(self, args):
         """Usage: print_allocations [--file=text_file]"""
-        amity.print_allocations(args["--file"])
+        if args["--file"]:
+            amity.print_allocations(args["--file"])
+        amity.print_allocations()
 
 
     @docopt_cmd

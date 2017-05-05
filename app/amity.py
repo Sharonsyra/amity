@@ -31,7 +31,7 @@ class Amity(object):
                     office = Office(room)
                     self.rooms.append(office)
                     self.offices.append(office)
-                    print("Office {} of id - {} successfully created".format(office.room_name, office.room_id))
+                    print("Office {} of id - {} successfully created".format(office.room_name.upper(), office.room_id))
 
                 elif room_type == "living_space":
                     living_space = LivingSpace(room)
@@ -47,8 +47,7 @@ class Amity(object):
             # add staff to people
             self.people.append(staff)
             self.staff.append(staff)
-            print(
-            "{} {} of id {} has been added to the system".format(staff.first_name, staff.last_name, staff.person_id))
+            print("{} {} of id {} has been added to the system".format(staff.first_name, staff.last_name, staff.person_id))
             # Allocate staff to a random empty office
             if len([i for i in self.offices if len(i.room_members) < i.room_capacity]) > 0:
                 office_allocated = random.choice([i for i in self.offices if len(i.room_members) < i.room_capacity])
@@ -96,13 +95,13 @@ class Amity(object):
             print("{} {} {}".format(person.person_id, person.first_name, person.last_name))
 
     def reallocate_person(self, person_identifier, new_room):
-        person = [p for p in self.people if person_identifier is p.person_id][0].__dict__
-        print("\n")
-        print(person)
-        current_room = [i for i in self.rooms if person_identifier in [p.person_id for p in i.room_members]][0].__dict__
-        print(current_room)
-        new_room_object = [room for room in self.rooms if new_room is room.room_name][0].__dict__
-        print(new_room_object)
+        person = [p for p in self.people if person_identifier is p.person_id][0]
+        # print("\n")
+        # print(person)
+        current_room = [i for i in self.rooms if person_identifier in [p.person_id for p in i.room_members]][0]
+        # print(current_room)
+        new_room_object = [room for room in self.rooms if new_room is room.room_name][0]
+        #  print(new_room_object)
         if person in self.staff:
             if new_room_object in self.living_spaces:
                 print("Staff cannot be reallocated to a living space!")
@@ -154,64 +153,45 @@ class Amity(object):
                 print("\n")
 
     def print_allocations(self, args=None):
+        allocations = ""
         for room in self.rooms:
-            print("\n")
-            print(room.room_name)
-            print("---------------------------------------")
+            allocations += "\n"
+            allocations += room.room_name
+            allocations += "\n"
+            allocations += "---------------------------------------\n"
             if len(room.room_members) == 0:
-                print("This room is empty")
+                allocations += "This room is empty"
             else:
                 for person in room.room_members:
-                    print(person, person.person_id)
+                    allocations += "{} {}\n".format(person, person.person_id)
         if not new_amity.rooms:
-            print("There are no rooms in the system. Create rooms and add people to display the allocations")
-            print("\n")
-
-            # if args:
-            #     with open(args, "w") as allocations_file:
-            #         for room in [i.room_name for i in self.rooms]:
-            #             allocations_file.write(room + "\n")
-            #             for person in [i.room_members for i in self.rooms]:
-            #                 allocations_file.write("".join(person))
-            # allocations_file.write(person.first_name + " " + person.last_name + " " + person.person_type + " " + person.wants_accommodation + "\n")
-            # else:
-            # print("File does not exist")
-            # if args:
-            #     with open(args, 'w') as allocations_file:
-            #         allocations_file.write(room.room_name)
-            #         for r in [i.room_members for i in self.rooms]:
-            #             allocations_file.write(r.room_members)
-            #         # print("Allocations have been saved to {}".format(args))
+            allocations += "There are no rooms in the system. Create rooms and add people to display the allocations"
+            allocations += "\n"
+        print(allocations)
+        if args:
+            with open(args, "w") as allocated_file:
+                allocated_file.write(allocations)
+        return self
 
     def print_unallocated(self, args=None):
+        un_allocations = ""
         if len(self.waiting_list) == 0:
-            print("There are no unallocated people")
+            un_allocations += "There are no unallocated people"
         else:
-            print("Office waiting list")
-            print("---------------------------------------")
+            un_allocations += "Office waiting list\n"
+            un_allocations += "---------------------------------------\n"
             for person in self.office_waiting_list:
-                print(person, person.person_id)
-            print("\n")
-            print("Living Space waiting list")
-            print("---------------------------------------")
+                un_allocations += "{0} {1}\n".format(person, person.person_id)
+            un_allocations += "Living Space waiting list\n"
+            un_allocations += "---------------------------------------\n"
             for person in self.living_space_waiting_list:
-                print(person, person.person_id)
+                un_allocations += "{0} {1}\n".format(person, person.person_id)
+        print(un_allocations)
 
         if args:
-            if args is True:
-                with open(args, "w") as unallocated_file:
-                    for person in self.office_waiting_list:
-                        unallocated_file.write("Office Waiting List")
-                        unallocated_file.write(
-                            person.first_name + " " + person.last_name + " " + person.person_type + " " + person.wants_accommodation + " " + "\n")
-
-                    for person in self.living_space_waiting_list:
-                        unallocated_file.write("Living Space Waiting List")
-                        unallocated_file.write(
-                            person.first_name + " " + person.last_name + " " + person.person_type + " " + person.wants_accommodation + " " + "\n")
-            else:
-                print("File does not exist")
-            return self
+            with open(args, "w") as unallocated_file:
+                unallocated_file.write(un_allocations)
+        return self
 
     def print_room(self, room):
         if room in [i.room_name for i in self.rooms]:
@@ -247,16 +227,16 @@ new_amity.create_room(["Red"], "office")
 
 # new_amity.print_allocations()
 # print("\n")
-# new_amity.print_unallocated()
+new_amity.print_unallocated()
 # print("\n")
 # new_amity.print_room("Mara")
 # print("\n")
-# # new_amity.load_people('people.txt')
-# new_amity.print_allocations('allocations.txt')
+new_amity.load_people('people.txt')
+new_amity.print_allocations('allocations.txt')
 # print("\n")
-# new_amity.print_unallocated('unallocated.txt')
+new_amity.print_unallocated('unallocated.txt')
 # print("\n")
-# new_amity.print_room("Mara")
+new_amity.print_room("Red")
 # print("\n")
 
 
