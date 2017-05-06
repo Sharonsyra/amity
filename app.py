@@ -116,8 +116,8 @@ class Amity(cmd.Cmd):
         """Usage: print_allocations [--file=text_file]"""
         if args["--file"]:
             print(args["--file"])
-            amity.print_allocations(args["--file"])
-        amity.print_allocations()
+            print(amity.print_allocations(args["--file"]))
+        print(amity.print_allocations())
 
     @docopt_cmd
     def do_reallocate_person(self, args):

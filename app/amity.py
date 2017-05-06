@@ -127,7 +127,7 @@ class Amity(object):
     def reallocate_person(self, person_identifier, new_room):
         person = self.person_object(person_identifier)
         """Check if person identifier exists"""
-        if person is not None:
+        if person:
             old_office = self.check_old_office(person)
             old_living_space = self.check_old_living_space(person)
             new_rm = self.check_room(person, new_room)
@@ -179,17 +179,20 @@ class Amity(object):
             print("Sorry the person identifier does not exist in the system")
 
     def load_people(self, txt_file=None):
-        with open(txt_file, 'r') as person_file:
-            for line in person_file:
-                first_name = line.split()[0]
-                last_name = line.split()[1]
-                person_type = line.split()[2].lower()
-                if len(line.split()) == 4:
-                    wants_accommodation = line.split()[3].upper()
-                else:
-                    wants_accommodation = "N"
-                self.add_person(first_name, last_name, person_type, wants_accommodation)
-                print("\n")
+        try:
+            with open(txt_file, 'r') as person_file:
+                for line in person_file:
+                    first_name = line.split()[0]
+                    last_name = line.split()[1]
+                    person_type = line.split()[2].lower()
+                    if len(line.split()) == 4:
+                        wants_accommodation = line.split()[3].upper()
+                    else:
+                        wants_accommodation = "N"
+                    self.add_person(first_name, last_name, person_type, wants_accommodation)
+                    print("\n")
+        except IOError:
+            print("File not found")
 
     def print_allocations(self, args=None):
         allocations = ""
@@ -203,7 +206,7 @@ class Amity(object):
             elif len(room.room_members) != 0:
                 for person in room.room_members:
                     allocations += "{} {}\n".format(person, person.person_id)
-        if not new_amity.rooms:
+        if not self.rooms:
             allocations += "There are no rooms in the system. Create rooms and add people to display the allocations"
             allocations += "\n"
         print(allocations)
@@ -231,7 +234,7 @@ class Amity(object):
         if args:
             with open(args, "w") as unallocated_file:
                 unallocated_file.write(un_allocations)
-        return self
+        # return self
 
     def print_room(self, room):
         if room in [i.room_name for i in self.rooms]:
@@ -254,7 +257,7 @@ new_amity.create_room(["Blue"], "office")
 new_amity.add_person("Ry", "Gi", "fellow", "N")
 
 new_amity.create_room(["Red"], "office")
-
+new_amity.load_people("tt")
 new_amity.print_allocations('allocations.txt')
 new_amity.print_unallocated('unallocated.txt')
 new_amity.print_room("Red")
