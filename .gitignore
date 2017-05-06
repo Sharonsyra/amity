@@ -2,3 +2,5 @@
 .idea/
 *.pyc
 amity
+allocations.txt
+unallocated.txt

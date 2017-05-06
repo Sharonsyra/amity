@@ -147,11 +147,11 @@ class Amity(cmd.Cmd):
         amity.load_people(args["<text_file>"])
 
     @docopt_cmd
-    def do_print_person_id(self):
+    def do_print_person_id(self, args):
         """ Usage: print_person_id """
         amity.print_person_id()
 
-    def do_quit(self, arg):
+    def do_quit(self, args):
         """Quits out of Interactive Mode."""
 
         print('Ciao Adios!!')
