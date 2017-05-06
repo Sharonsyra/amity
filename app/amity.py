@@ -102,19 +102,13 @@ class Amity(object):
         else:
             return None
 
-    # def check_room(self, new_room, person):
-    #     if new_room in [rm.room_name for rm in self.rooms]:
-    #         for room in self.rooms:
-    #             if room.room_name == new_room and len(room.room_members) < room.room_capacity and person not in \
-    #                     [p for p in room.room_members]:
-    #                 return room
-    #             elif room.room_name == new_room and len(room.room_members) >= room.room_capacity:
-    #                 return "full room"
-    #             elif room.room_name == new_room and person in [p for p in room.room_members]:
-    #                 return "present in room"
-    #
-    #     elif new_room not in [rm.room_name for rm in self.rooms]:
-    #         return None
+    def check_room(self, new_room, person):
+        if new_room in [rm.room_name for rm in self.rooms]:
+            for room in self.rooms:
+                if room.room_name == new_room and person in [p for p in room.room_members]:
+                    return "present in room"
+        elif new_room not in [rm.room_name for rm in self.rooms]:
+            return None
 
     def check_old_office(self, person):
         for room in self.offices:
@@ -146,7 +140,7 @@ class Amity(object):
                 print("Sorry. {} is already full".format(new_room))
 
             """Person already present in room"""
-            if person in [p for p in new_room.room_members]:
+            if new_room != "present in room":
                 print("Allocate")
             if person not in [p for p in new_room.room_members]:
                 print("{} {} is already in room {}".format(person.first_name, person.last_name, new_room.room_name))
