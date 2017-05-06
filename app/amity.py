@@ -105,6 +105,10 @@ class Amity(object):
     def check_room(self, new_room, person):
         if new_room in [rm.room_name for rm in self.rooms]:
             for room in self.rooms:
+                if new_room in [i.room_name for i in self.rooms]:
+                    return "Exists"
+                if new_room in [i for i in self.rooms if len(i.room_members) < i.room_capacity]:
+                    return "Available"
                 if new_room == room.room_name and person in [p for p in room.room_members]:
                     return room
         elif new_room not in [rm.room_name for rm in self.rooms]:
@@ -128,21 +132,21 @@ class Amity(object):
             old_living_space = self.check_old_living_space(person)
             new_rm = self.check_room(person, new_room)
             """Check if room exists"""
-            if new_rm in [i.room_name for i in self.rooms]:
-                print("Exists!")
-            if new_rm not in [i.room_name for i in self.rooms]:
-                print("Sorry. Room {} doest not exist in the system.".format(new_room))
-
-            """Check if room has space"""
-            if new_rm in [i for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                print("Available!")
-                """Person already present in room"""
-                if new_room != new_rm:
-                    print("Allocate")
-                if person == new_rm:
-                    print("{} {} is already in room {}".format(person.first_name, person.last_name, new_rm.room_name))
-            if new_rm in [i for i in self.rooms if len(i.room_members) >= i.room_capacity]:
-                print("Sorry. {} is already full".format(new_rm))
+            if new_rm == "Exists":
+                print("The room exists in the system!")
+                """Check if room has space"""
+                if new_rm == "Available":
+                    print("Available for allocation!")
+                    """Person already present in room"""
+                    if new_room != new_rm:
+                        print("Allocate")
+                    elif person == new_rm:
+                        print("{} {} is already in room {}".format(person.first_name, person.last_name,
+                                                                   new_rm.room_name))
+                if new_rm != "Available":
+                    print("Sorry. {} is already full".format(new_room))
+            if new_rm != "Exists":
+                print("Sorry. Room {} does not exist in the system.".format(new_room))
 
             """Living space reallocation"""
             if new_room in self.living_spaces:
