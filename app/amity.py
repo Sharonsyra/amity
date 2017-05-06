@@ -90,54 +90,66 @@ class Amity(object):
                                                                                          fellow.last_name))
         return self
 
-    def print_id(self):
-        for person in [i for i in self.people]:
+    def print_person_id(self):
+        for person in self.people:
             print("{} {} {}".format(person.person_id, person.first_name, person.last_name))
 
+    def person_object(self, person_identifier):
+        if person_identifier in [p.person_id for p in self.people]:
+            for person in [p.person_id for p in self.people]:
+                if person_identifier == p.person_id:
+                    return person
+        else:
+            return None
+
+    def check_old_office(self, person):
+        for room in self.offices:
+            if person in [p for p in room.room_members]:
+                return room
+
+    def check_old_living_space(self, person):
+        for room in self.living_spaces:
+            if person in [p for p in room.room_members]:
+                return room
+
     def reallocate_person(self, person_identifier, new_room):
-        person = [p for p in self.people if person_identifier is p.person_id][0]
-        # print("\n")
-        # print(person)
-        current_room = [i for i in self.rooms if person_identifier in [p.person_id for p in i.room_members]][0]
-        # print(current_room)
-        new_room_object = [room for room in self.rooms if new_room is room.room_name][0]
-        #  print(new_room_object)
-        if person in self.staff:
-            if new_room_object in self.living_spaces:
-                print("Staff cannot be reallocated to a living space!")
-            elif current_room is False:
-                print("We cannot reallocate you as you had no room to begin with")
-            elif new_room_object not in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                print("Sorry. The room is not available!")
-            elif new_room_object in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                current_room.room_members.remove(person)
-                new_room_object.room_members.append(person)
-                print("{} {} has been allocated to {}".format(person.first_name, person.last_name, new_room_object.room_name))
-        elif person in self.fellows:
-            if new_room in self.offices:
-                if current_room is False:
-                    print("We cannot reallocate you as you had no room to begin with")
-                elif new_room_object.room_type is not current_room.room_type:
-                    print("You can only be reallocated to the same room type as your current room!")
-                elif new_room_object not in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                    print("Sorry. The room is not available!")
-                elif new_room_object in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                    current_room.room_members.remove(person)
-                    new_room_object.room_members.append(person)
-                    print("{} {} has been allocated to {}".format(person.first_name, person.last_name,
-                                                                  new_room_object.room_name))
-            elif new_room in self.living_spaces:
-                if current_room is False:
-                    print("We cannot reallocate you as you had no room to begin with")
-                elif new_room_object.room_type is not current_room.room_type:
-                    print("You can only be reallocated to the same room type as your current room!")
-                elif new_room_object not in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                    print("Sorry. The room is not available!")
-                elif new_room_object in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
-                    current_room.room_members.remove(person)
-                    new_room_object.room_members.append(person)
-                    print("{} {} has been allocated to {}".format(person.first_name, person.last_name,
-                                                                  new_room_object.room_name))
+        person = self.person_object(person_identifier)
+        if person is not None:
+            old_office = self.check_old_office(person)
+            old_living_space = self.check_old_living_space(person)
+            if new_room in self.rooms:
+                if new_room in [i.room_name for i in self.rooms if len(i.room_members) < i.room_capacity]:
+                    if person not in new_room.room_members:
+                        if new_room in self.living_spaces:
+                            if person in self.staff:
+                                print("Staff cannot be allocated to living spaces!")
+                            if person in self.fellows:
+                                new_room.room_members.append(person)
+                                old_living_space.room_members.remove(person)
+                                print("{} {} of id {} has been reallocated from living space {} to {}".format(
+                                    person.first_name, person.last_name, person_identifier, old_living_space, new_room))
+                            if person in self.living_space_waiting_list:
+                                new_room.room_members.append(person)
+                                print("{} {} of id {} has been allocated to {}".format(
+                                    person.first_name, person.last_name, person_identifier, new_room))
+                        elif new_room in self.offices:
+                            if old_office is not None:
+                                new_room.room_members.append(person)
+                                old_office.room_members.remove(person)
+                                print("{} {} of id {} has been reallocated from living space {} to {}".format(
+                                    person.first_name, person.last_name, person_identifier, old_office, new_room))
+                            if person in self.office_waiting_list:
+                                new_room.room_members.append(person)
+                                print("{} {} of id {} has been allocated to {}".format(
+                                    person.first_name, person.last_name, person_identifier, new_room))
+                    else:
+                        print("Person present in room!")
+                else:
+                    print("full room")
+            else:
+                print("No such room")
+        else:
+            print("Sorry the person identifier does not exist in the system")
 
     def load_people(self, txt_file=None):
         with open(txt_file, 'r') as person_file:
@@ -214,32 +226,12 @@ new_amity.create_room(["Blue"], "office")
 new_amity.add_person("Ry", "Gi", "fellow", "N")
 
 new_amity.create_room(["Red"], "office")
-# new_amity.add_person("R", "G", "fellow", "Y")
-# new_amity.add_person("Robley", "Gori", "fellow", "Y")
-# new_amity.add_person("Robley", "Gori", "fellow", "Y")
-# new_amity.add_person("Robley", "Gori", "staff", "Y")
-# new_amity.add_person("Robley", "Gori", "fellow", "Y")
-# new_amity.add_person("Robley", "Gori", "staff", "Y")
-# new_amity.add_person("Robley", "Gori", "fellow", "Y")
-# new_amity.add_person("Robley", "Gori", "fellow", "Y")
-# new_amity.add_person("Rob", "Gori", "staff", "N")
 
-
-# new_amity.print_allocations()
-# print("\n")
-new_amity.print_unallocated()
-# print("\n")
-# new_amity.print_room("Mara")
-# print("\n")
 new_amity.load_people('people.txt')
 new_amity.print_allocations('allocations.txt')
-# print("\n")
 new_amity.print_unallocated('unallocated.txt')
-# print("\n")
 new_amity.print_room("Red")
-# print("\n")
-
-
-person_id = new_amity.rooms[0].room_members[0].person_id
-# print("\n\n {}".format(person_id))
-new_amity.reallocate_person(person_id, "Red")
+new_amity.print_id()
+# person_id = new_amity.rooms[0].room_members[0].person_id
+# # print("\n\n {}".format(person_id))
+# new_amity.reallocate_person(person_id, "Red")
