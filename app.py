@@ -17,7 +17,6 @@ Usage:
 Options:
     -i, --interactive  Interactive Mode
     -h, --help  Show this screen and exit.
-    --baud=<n>  Baudrate [default: 9600]
 """
 
 import sys

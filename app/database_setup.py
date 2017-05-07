@@ -1,63 +1,58 @@
 import sys
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Sequence
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
-from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = declarative_base()
 
 
-class User(Base):
-    __tablename__ = 'user'
+class Person(Base):
+    __tablename__ = 'person'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(80), nullable=False)
-    username = Column(String(80), nullable=False)
-    email = Column(String(100), nullable=True)
-    password = Column(String)
+    id = Column(Integer, Sequence('person_id'), primary_key=True)
+    first_name = Column(String(80), nullable=False)
+    last_name = Column(String(80), nullable=False)
+    person_type = Column(String(20), nullable=False)
+    wants_accommodation = Column(String(10), nullable=True)
 
-    def __init__(self, name, username, email, password):
-        self.name = name
-        self.username = username
-        self.email = email
-        self.hashed_password(password)
+    def __repr__(self):
+        return "<User(name='%s', fullname='%s', password='%s')>" % (
+            self.first_name, self.last_name, self.password)
 
-    def hashed_password(self, new_password):
-        """
-        Hashes the new entered password
-        """
-        self.password = generate_password_hash(new_password)
+class Room(Base):
+    __tablename__ = 'room'
+    id = Column(Integer(10), Sequence('room_id'), primary_key=True)
+    room_name = Column(String(30), nullable=False)
+    room_capacity = Column(Integer(10), nullable=False)
+    room_type = Column(String(20), nullable=False)
+    member1 = Column(String(30), ForeignKey('person.id'))
+    member2 = Column(String(30), ForeignKey('person.id'))
+    member3 = Column(String(30), ForeignKey('person.id'))
+    member4 = Column(String(30), ForeignKey('person.id'))
+    member5 = Column(String(30), ForeignKey('person.id'))
+    member6 = Column(String(30), ForeignKey('person.id'))
 
-    def generate_token(self, expiration=1200):
-        """
-        generates token
-        """
-        serialize = Serialize(app.config['SECRET_KEY'], expire_time=expiration)
-        return serialize.dumps({'id': self.id})
+    def __repr__(self):
+        if self.room_type.lower() == 'office':
+            return """<Room(room name='%s', member1='%s',
+            member2='%s', member3='%s', member4='%s',
+            member5='%s', member6='%s')>""" % (self.room_name,
+                                               self.member1,
+                                               self.member2,
+                                               self.member3,
+                                               self.member4,
+                                               self.member5,
+                                               self.member6)
 
-
-class Ideas(Base):
-    __tablename__ = 'idea'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(80), nullable=False)
-    description = Column(String(250), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-    upvotes = Column(Integer, default=0)
-    downvotes = Column(Integer, default=0)
-
-
-class Comments(Base):
-    __tablename__ = 'comments'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    comment = Column(String(250), nullable=True)
-    idea_id = Column(Integer, ForeignKey('idea.id'))
-    user_id = Column(Integer, ForeignKey('user.id'))
-
+        elif self.room_type.lower() == "living_space":
+            return """<Room(room name='%s',
+             member1='%s',member2='%s',
+              member3='%s', member4='%s')>""" % (self.room_name,
+                                                 self.member1,
+                                                 self.member2,
+                                                 self.member3,
+                                                 self.member4)
 
 # end of file code
 engine = create_engine('sqlite:///userideas.db')
