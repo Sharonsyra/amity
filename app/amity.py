@@ -107,17 +107,14 @@ class Amity(object):
         new_room_object = [room for room in self.rooms if room.room_name == new_room]
         if len(new_room_object):
             room = new_room_object[0]
-            if len(room.room_members) < room.room_capacity and person_identifier not in [p.person_id for p in room.room_members]:
-                # print 'allocate.'
-                return "allocate"
-            # if person_identifier in [p.person_id for p in room.room_members]:
-            #     # print "present"
-            #     return "present"
-            # if len(room.room_members) >= room.room_capacity:
-            #     # print "full"
-            #     return "full"
+            if len(room.room_members) < room.room_capacity:
+                if person_identifier not in [p.person_id for p in room.room_members]:
+                    return new_room
+                else:
+                    return "present"
+            else:
+                return "full"
         else:
-            print 'Room does not exist'
             return 'Room does not exist'
 
     def check_old_office(self, person):
@@ -138,45 +135,45 @@ class Amity(object):
             old_living_space = self.check_old_living_space(person)
             new_rm = self.check_room(new_room, person_identifier)
             """Check if room exists"""
-            if new_rm:
-                if new_rm == "allocate":
-                    """Living space reallocation"""
-                    if new_rm in self.living_spaces:
-                        if person in self.staff:
-                            print("Staff cannot be allocated to living spaces!")
-                        elif person in self.fellows:
-                            if old_living_space is not None:
-                                new_rm.room_members.append(person)
-                                old_living_space.room_members.remove(person)
-                                print("{} {} of id {} has been reallocated from living space {} to {}".format(
-                                    person.first_name, person.last_name, person_identifier, old_living_space, new_room))
-                            elif old_living_space is None:
-                                if person in self.living_space_waiting_list:
-                                    new_rm.room_members.append(person)
-                                    print("{} {} of id {} has been allocated to {}".format(person.first_name,
-                                                                                           person.last_name,
-                                                                                           person_identifier, new_room))
-                    """Office reallocation"""
-                    if new_rm in self.offices:
-                        if old_office is not None:
-                            new_room.room_members.append(person)
-                            old_office.room_members.remove(person)
-                            print("{} {} of id {} has been reallocated from living space {} to {}".format(
-                                person.first_name, person.last_name, person_identifier, old_office, new_room))
-                        elif old_office is None:
-                            if person in self.office_waiting_list:
-                                new_room.room_members.append(person)
-                                print("{} {} of id {} has been allocated to {}".format(
-                                    person.first_name, person.last_name, person_identifier, new_room))
-                elif new_rm == "present":
-                        print("{} {} is already in room {}".format(person.first_name, person.last_name,
-                                                                   new_room))
-                elif new_rm == "full":
-                    print("Sorry. {} is already full".format(new_room))
-
-            elif new_rm == "Room does not exist":
+            if new_rm == "Room does not exist":
                 print("Sorry. Room {} does not exist in the system.".format(new_room))
 
+            else:
+                if new_rm == "full":
+                    print("Sorry. {} is already full".format(new_room))
+                else:
+                    if new_rm == "present":
+                        print("{} {} is already in room {}".format(person.first_name, person.last_name, new_room))
+
+                    else:
+                        """Living space reallocation"""
+                        if new_rm in self.living_spaces:
+                            if person in self.staff:
+                                print("Staff cannot be allocated to living spaces!")
+                            elif person in self.fellows:
+                                if old_living_space is not None:
+                                    new_rm.room_members.append(person)
+                                    old_living_space.room_members.remove(person)
+                                    print("{} {} of id {} has been reallocated from living space {} to {}".format(
+                                        person.first_name, person.last_name, person_identifier, old_living_space, new_room))
+                                elif old_living_space is None:
+                                    if person in self.living_space_waiting_list:
+                                        new_rm.room_members.append(person)
+                                        print("{} {} of id {} has been allocated to {}".format(person.first_name,
+                                                                                               person.last_name,
+                                                                                               person_identifier, new_room))
+                        """Office reallocation"""
+                        if new_rm in self.offices:
+                            if old_office is not None:
+                                new_room.room_members.append(person)
+                                old_office.room_members.remove(person)
+                                print("{} {} of id {} has been reallocated from living space {} to {}".format(
+                                    person.first_name, person.last_name, person_identifier, old_office, new_room))
+                            elif old_office is None:
+                                if person in self.office_waiting_list:
+                                    new_room.room_members.append(person)
+                                    print("{} {} of id {} has been allocated to {}".format(
+                                        person.first_name, person.last_name, person_identifier, new_room))
         if person is None:
             print("Sorry the person identifier does not exist in the system")
 
