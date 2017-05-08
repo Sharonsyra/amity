@@ -59,10 +59,10 @@ class AmityTestCase(unittest.TestCase):
 
     def test_add_person_add_person_to_office(self):
         """ Test that person is successfully added to office """
-        initial_people_in_office = len(self.amity.print_allocations())
+        initial_people_in_office = len(self.amity.room.room_members())
         self.amity.create_room("red", "office")
         self.amity.add_person("Robley", "Gori", "staff", "N")
-        final_length_of_office = len(self.amity.print_allocations())
+        final_length_of_office = len(self.amity.room.room_members())
         self.assertEqual((initial_people_in_office + 1), final_length_of_office)
     #     # self.amity.create_room("PinkRoom", "Office")
     #     # self.amity.create_room("ConferenceCentre", "Office")
