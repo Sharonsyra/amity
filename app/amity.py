@@ -84,8 +84,7 @@ class Amity(object):
             if wants_accommodation == "Y":
                 # Get the list of available living spaces
                 if len([i for i in self.living_spaces if len(i.room_members) < i.room_capacity]) > 0:
-                    living_space_allocated = random.choice(
-                        [i for i in self.living_spaces if len(i.room_members) < i.room_capacity])
+                    living_space_allocated = random.choice([i for i in self.living_spaces if len(i.room_members) < i.room_capacity])
                     living_space_allocated.room_members.append(fellow)
                     print("{} {} has been allocated {}".format(fellow.first_name, fellow.last_name,
                                                                living_space_allocated))
@@ -98,8 +97,7 @@ class Amity(object):
                     print("{} {} has been added to the living space waiting list".format(fellow.first_name,
                                                                                          fellow.last_name))
                     return "{} {} has been added to the living space waiting list".format(fellow.first_name,
-                                                                                         fellow.last_name)
-        return self
+                                                                                     fellow.last_name)
 
     def print_person_id(self):
         for person in self.people:
@@ -223,24 +221,21 @@ class Amity(object):
     def print_allocations(self, args=None):
         allocations = ""
         for room in self.rooms:
-            allocations += "\n"
-            allocations += room.room_name
-            allocations += "\n"
-            allocations += "---------------------------------------\n"
-            if len(room.room_members) == 0:
-                allocations += "This room is empty"
-            elif len(room.room_members) != 0:
+            if len(room.room_members) != 0:
+                allocations += "\n"
+                allocations += room.room_name
+                allocations += "\n"
+                allocations += "---------------------------------------\n"
                 for person in room.room_members:
                     allocations += "{} {}\n".format(person, person.person_id)
         if not self.rooms:
             allocations += "There are no rooms in the system. Create rooms and add people to display the allocations"
             allocations += "\n"
-        print(allocations)
+        return(allocations)
 
         if args:
             with open(args, "w") as allocated_file:
                 allocated_file.write(allocations)
-        return self
 
     def print_unallocated(self, args=None):
         un_allocations = ""
@@ -260,7 +255,6 @@ class Amity(object):
         if args:
             with open(args, "w") as unallocated_file:
                 unallocated_file.write(un_allocations)
-        # return self
 
     def print_room(self, room):
         if room in [i.room_name for i in self.rooms]:
