@@ -4,6 +4,7 @@ from unittest import TestCase
 import unittest
 from app.amity import Amity
 
+
 class AmityTestCase(unittest.TestCase):
 
     """ Tests for amity """
@@ -59,15 +60,9 @@ class AmityTestCase(unittest.TestCase):
 
     def test_add_person_add_person_to_office(self):
         """ Test that person is successfully added to office """
-        initial_people_in_office = len(self.amity.room.room_members())
-        self.amity.create_room("red", "office")
-        self.amity.add_person("Robley", "Gori", "staff", "N")
-        final_length_of_office = len(self.amity.room.room_members())
-        self.assertEqual((initial_people_in_office + 1), final_length_of_office)
-    #     # self.amity.create_room("PinkRoom", "Office")
-    #     # self.amity.create_room("ConferenceCentre", "Office")
-        # self.amity.create_room("BlueRoom", "Office")
-        # self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Person was allocated an office successfully")
+        
+        self.amity.create_room("BlueRoom", "Office")
+        self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Robley Gori has been allocated BlueRoom")
 
     def test_add_person_add_fellow_to_living_space(self):
         """ Test that fellow is successfully added to living space """
