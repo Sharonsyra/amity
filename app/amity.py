@@ -107,13 +107,13 @@ class Amity(object):
         new_room_object = [room for room in self.rooms if room.room_name == new_room]
         if len(new_room_object):
             room = new_room_object[0]
-            if len(room.room_members) < room.room_capacity:
-                if person_identifier not in [p.person_id for p in room.room_members]:
-                    return new_room
-                else:
-                    return "present"
-            else:
-                return "full"
+            # if len(room.room_members) < room.room_capacity:
+            #     if person_identifier not in [p.person_id for p in room.room_members]:
+            #         return new_room
+            #     else:
+            #         return "present"
+            # else:
+            #     return "full"
         else:
             return 'Room does not exist'
 
@@ -138,42 +138,34 @@ class Amity(object):
             if new_rm == "Room does not exist":
                 print("Sorry. Room {} does not exist in the system.".format(new_room))
 
-            else:
-                if new_rm == "full":
-                    print("Sorry. {} is already full".format(new_room))
-                else:
-                    if new_rm == "present":
-                        print("{} {} is already in room {}".format(person.first_name, person.last_name, new_room))
-
-                    else:
-                        """Living space reallocation"""
-                        if new_rm in self.living_spaces:
-                            if person in self.staff:
-                                print("Staff cannot be allocated to living spaces!")
-                            elif person in self.fellows:
-                                if old_living_space is not None:
-                                    new_rm.room_members.append(person)
-                                    old_living_space.room_members.remove(person)
-                                    print("{} {} of id {} has been reallocated from living space {} to {}".format(
-                                        person.first_name, person.last_name, person_identifier, old_living_space, new_room))
-                                elif old_living_space is None:
-                                    if person in self.living_space_waiting_list:
-                                        new_rm.room_members.append(person)
-                                        print("{} {} of id {} has been allocated to {}".format(person.first_name,
-                                                                                               person.last_name,
-                                                                                               person_identifier, new_room))
-                        """Office reallocation"""
-                        if new_rm in self.offices:
-                            if old_office is not None:
-                                new_room.room_members.append(person)
-                                old_office.room_members.remove(person)
-                                print("{} {} of id {} has been reallocated from living space {} to {}".format(
-                                    person.first_name, person.last_name, person_identifier, old_office, new_room))
-                            elif old_office is None:
-                                if person in self.office_waiting_list:
-                                    new_room.room_members.append(person)
-                                    print("{} {} of id {} has been allocated to {}".format(
-                                        person.first_name, person.last_name, person_identifier, new_room))
+            """Living space reallocation"""
+            if new_rm in self.living_spaces:
+                if person in self.staff:
+                    print("Staff cannot be allocated to living spaces!")
+                elif person in self.fellows:
+                    if old_living_space is not None:
+                        new_rm.room_members.append(person)
+                        old_living_space.room_members.remove(person)
+                        print("{} {} of id {} has been reallocated from living space {} to {}".format(
+                            person.first_name, person.last_name, person_identifier, old_living_space, new_room))
+                    elif old_living_space is None:
+                        if person in self.living_space_waiting_list:
+                            new_rm.room_members.append(person)
+                            print("{} {} of id {} has been allocated to {}".format(person.first_name,
+                                                                                   person.last_name,
+                                                                                   person_identifier, new_room))
+            """Office reallocation"""
+            if new_rm in self.offices:
+                if old_office is not None:
+                    new_room.room_members.append(person)
+                    old_office.room_members.remove(person)
+                    print("{} {} of id {} has been reallocated from living space {} to {}".format(
+                        person.first_name, person.last_name, person_identifier, old_office, new_room))
+                elif old_office is None:
+                    if person in self.office_waiting_list:
+                        new_room.room_members.append(person)
+                        print("{} {} of id {} has been allocated to {}".format(
+                            person.first_name, person.last_name, person_identifier, new_room))
         if person is None:
             print("Sorry the person identifier does not exist in the system")
 
@@ -251,21 +243,21 @@ class Amity(object):
         connection = sqlite3.connect("amity.db")
         cc = connection.cursor()
         cc.execute('''DROP TABLE IF EXISTS room''')
-        cc.execute('''CREATE TABLE room(room_id INTEGER , room_name text, room_capacity INTEGER , room_type text, room_members INTEGER )''')
+        cc.execute('''CREATE TABLE room( room_id INTEGER , room_name text, room_capacity INTEGER , room_type text, allocations text )''')
         for room in self.rooms:
-            room_members = ""
+            allocations = ""
             room_id = room.room_id
             room_name = room.room_name
             room_capacity = room.room_capacity
             room_type = room.room_type
             for person in room.room_members:
-                room_members += person.person_id
-            cc.execute("INSERT INTO room (room_id, room_name, room_capacity, room_type, room_members) VALUES (?,?,?,?, ?)",
-                         (room_id, room_name, room_capacity, room_type, room_members))
+                allocations += person.person_id + ","
+            cc.execute("INSERT INTO room (room_id, room_name, room_capacity, room_type, allocations) VALUES (?,?,?,?,?)",
+                         (room_id, room_name, room_capacity, room_type, allocations))
 
         cc.execute('''DROP TABLE IF EXISTS person''')
         cc.execute(
-            '''CREATE TABLE person(room_id INTEGER , room_name text, room_capacity INTEGER , room_type text, room_members INTEGER )''')
+            '''CREATE TABLE person(person_id INTEGER , first_name text, last_name text , person_type text, wants_accomodation text )''')
         for person in self.people:
             person_id = person.person_id
             first_name = person.first_name
@@ -273,7 +265,7 @@ class Amity(object):
             person_type = person.person_type
             wants_accommodation = person.wants_accommodation
             cc.execute(
-                "INSERT INTO person (person_id, first_name, last_name, person_type, wants_accommodation) VALUES (?,?,?,?, ?)",
+                "INSERT INTO person (person_id, first_name, last_name, person_type, wants_accommodation) VALUES (?,?,?,?,?)",
                 (person_id, first_name, last_name, person_type, wants_accommodation))
 
         cc.execute('''DROP TABLE IF EXISTS office_waiting_list''')
@@ -289,7 +281,7 @@ class Amity(object):
 
         cc.execute('''DROP TABLE IF EXISTS living_space_waiting_list''')
         cc.execute(
-            '''CREATE TABLE living_space_waiting_list(room_id INTEGER , room_name text, room_capacity INTEGER , room_type text, room_members INTEGER )''')
+            '''CREATE TABLE living_space_waiting_list(person_id INTEGER , first_name text, last_name text)''')
         for person in self.living_space_waiting_list:
             person_id = person.person_id
             first_name = person.first_name
@@ -305,19 +297,3 @@ class Amity(object):
     def load_state(self):
         pass
 
-# new_amity = Amity()
-#
-# new_amity.create_room(["Blue"], "office")
-# # new_amity.create_room(["Mara"], "living_space")
-# # new_amity.add_person("Robley", "Gori", "fellow", "Y")
-# new_amity.add_person("Ry", "Gi", "fellow", "N")
-#
-# new_amity.create_room(["Red"], "office")
-# new_amity.load_people("tt")
-# new_amity.print_allocations('allocations.txt')
-# new_amity.print_unallocated('unallocated.txt')
-# new_amity.print_room("Red")
-# new_amity.print_person_id()
-# # person_id = new_amity.rooms[0].room_members[0].person_id
-# # # print("\n\n {}".format(person_id))
-# # new_amity.reallocate_person(person_id, "Red")
