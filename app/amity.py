@@ -119,13 +119,6 @@ class Amity(object):
         if len(new_room_object):
             room = new_room_object[0]
             return room
-            # if len(room.room_members) < room.room_capacity:
-            #     if person_identifier not in [p.person_id for p in room.room_members]:
-            #         return new_room
-            #     else:
-            #         return "present"
-            # else:
-            #     return "full"
         else:
             return 'Room does not exist'
 
