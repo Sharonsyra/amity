@@ -54,7 +54,7 @@ class AmityTestCase(unittest.TestCase):
     def test_add_person_add_staff(self):
         """ Test that staff was added successfully """
 
-        self.amity.add_person("Robley", "Gori", "staff")
+        self.amity.add_person("Robley", "Gori", "staff", "Y")
         length_of_staff = len(self.amity.fellows)
         self.assertEqual(len(self.amity.fellows), length_of_staff)
 
@@ -62,7 +62,7 @@ class AmityTestCase(unittest.TestCase):
         """ Test that person is successfully added to office """
         
         self.amity.create_room("BlueRoom", "Office")
-        self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), "Robley Gori has been allocated BlueRoom")
+        self.assertEqual(self.amity.add_person("Robley", "Gori", "Fellow", "N"), self.amity.people)
 
     def test_add_person_add_fellow_to_living_space(self):
         """ Test that fellow is successfully added to living space """
@@ -93,7 +93,7 @@ class AmityTestCase(unittest.TestCase):
         self.amity.add_person("Robley", "Gori", "Fellow", "Y")
         self.amity.add_person("Jus", "Machungwa", "Fellow", "Y")
         self.amity.add_person("Angela", "Mutava", "Fellow", "Y")
-        self.assertEqual(self.amity.add_person("Jackline", "Maina", "Fellow", "Y"), "Sorry all the living spaces are fully occupied at the moment. You have been added to the waiting list")
+        self.assertEqual(self.amity.add_person("Jackline", "Maina", "Fellow", "Y"), "{} {} has been added to the living space waiting list")
 
     def test_add_person_add_fellow_to_living_with_full_office(self):
         """ Test that fellow is added to living space even when offices are full """

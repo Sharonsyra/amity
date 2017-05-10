@@ -24,10 +24,11 @@ class Amity(object):
         self.living_space_waiting_list = []
 
     def create_room(self, room_list, room_type):
+        rooms = ""
         for room in room_list:
             if room in [room_object.room_name for room_object in self.rooms]:
                 print("cannot create room {} . The room already exists.".format(room))
-                return "cannot create room {} . The room already exists.".format(room)
+                rooms += "cannot create room {} . The room already exists.".format(room)
 
             else:
                 if room_type == "office":
@@ -35,6 +36,7 @@ class Amity(object):
                     self.rooms.append(office)
                     self.offices.append(office)
                     print("Office {} of id - {} successfully created".format(office.room_name.upper(), office.room_id))
+                    rooms += "Office {} of id - {} successfully created".format(office.room_name.upper(), office.room_id)
 
                 elif room_type == "living_space":
                     living_space = LivingSpace(room)
@@ -42,44 +44,54 @@ class Amity(object):
                     self.living_spaces.append(living_space)
                     print("Living Space {} of id - {} successfully created".format(living_space.room_name,
                                                                                    living_space.room_id))
+                    rooms += "Living Space {} of id - {} successfully created".format(living_space.room_name,
+                                                                                   living_space.room_id)
+        return rooms
 
-    def add_person(self, first_name, last_name, person_type, wants_accommodation=None):
+    def add_person(self, first_name, last_name, person_type, wants_accommodation):
+        people = ""
         if person_type == "staff":
             staff = Staff(first_name, last_name)
             # add staff to people
             self.people.append(staff)
             self.staff.append(staff)
             print("{} {} of id {} has been added to the system".format(staff.first_name, staff.last_name, staff.person_id))
+            people += "{} {} of id {} has been added to the system".format(staff.first_name, staff.last_name, staff.person_id)
 
             # Allocate staff to a random empty office
             if len([room_object for room_object in self.offices if len(room_object.room_members) < room_object.room_capacity]) > 0:
                 office_allocated = random.choice([i for i in self.offices if len(i.room_members) < i.room_capacity])
                 office_allocated.room_members.append(staff)
                 print("{} {} has been allocated {}".format(staff.first_name, staff.last_name, office_allocated))
-                return "{} {} has been allocated {}".format(staff.first_name, staff.last_name, office_allocated)
+                people += "{} {} has been allocated {}".format(staff.first_name, staff.last_name, office_allocated)
             else:
                 self.waiting_list.append(staff)
                 self.office_waiting_list.append(staff)
                 print("{} {} has been added to the office waiting list".format(staff.first_name, staff.last_name))
-                return "{} {} has been added to the office waiting list".format(staff.first_name, staff.last_name)
+                people += "{} {} has been added to the office waiting list".format(staff.first_name, staff.last_name)
+
+            if wants_accommodation == "Y":
+                print("Staff cannot be allocated a living space!")
+                people += "Staff cannot be allocated a living space!"
 
         elif person_type == "fellow":
             fellow = Fellow(first_name, last_name)
             # add fellow to people
             self.people.append(fellow)
             self.fellows.append(fellow)
+            people += "{} {} of id {} has been added to the system".format(first_name, last_name, fellow.person_id)
             print("{} {} of id {} has been added to the system".format(first_name, last_name, fellow.person_id))
             # Give them an office first
             if len([i for i in self.offices if len(i.room_members) < i.room_capacity]) > 0:
                 office_allocated = random.choice([i for i in self.offices if len(i.room_members) < i.room_capacity])
                 office_allocated.room_members.append(fellow)
                 print("{} {} has been allocated {}".format(fellow.first_name, fellow.last_name, office_allocated))
-                return "{} {} has been allocated {}".format(fellow.first_name, fellow.last_name, office_allocated)
+                people += "{} {} has been allocated {}".format(fellow.first_name, fellow.last_name, office_allocated)
             else:
                 self.waiting_list.append(fellow)
                 self.office_waiting_list.append(fellow)
                 print("{} {} has been added to the office waiting list".format(fellow.first_name, fellow.last_name))
-                return "{} {} has been added to the office waiting list".format(fellow.first_name, fellow.last_name)
+                people += "{} {} has been added to the office waiting list".format(fellow.first_name, fellow.last_name)
 
             if wants_accommodation == "Y":
                 # Get the list of available living spaces
@@ -88,7 +100,7 @@ class Amity(object):
                     living_space_allocated.room_members.append(fellow)
                     print("{} {} has been allocated {}".format(fellow.first_name, fellow.last_name,
                                                                living_space_allocated))
-                    return "{} {} has been allocated {}".format(fellow.first_name, fellow.last_name,
+                    people += "{} {} has been allocated {}".format(fellow.first_name, fellow.last_name,
                                                                living_space_allocated)
 
                 else:
@@ -96,8 +108,10 @@ class Amity(object):
                     self.living_space_waiting_list.append(fellow)
                     print("{} {} has been added to the living space waiting list".format(fellow.first_name,
                                                                                          fellow.last_name))
-                    return "{} {} has been added to the living space waiting list".format(fellow.first_name,
+                    people += "{} {} has been added to the living space waiting list".format(fellow.first_name,
                                                                                      fellow.last_name)
+        else:
+            print("Person type can only be fellow or staff")
 
     def print_person_id(self):
         for person in self.people:
@@ -106,7 +120,7 @@ class Amity(object):
 
     def person_object(self, person_identifier):
         if person_identifier in [p.person_id for p in self.people]:
-            for person in [p.person_id for p in self.people]:
+            for p in [p.person_id for p in self.people]:
                 if person_identifier == p.person_id:
                     return p
         else:
@@ -231,7 +245,7 @@ class Amity(object):
         if not self.rooms:
             allocations += "There are no rooms in the system. Create rooms and add people to display the allocations"
             allocations += "\n"
-        return(allocations)
+        print(allocations)
 
         if args:
             with open(args, "w") as allocated_file:
@@ -268,8 +282,9 @@ class Amity(object):
             print("The room does not exist in the system")
         return self
 
-    def save_state(self, args=None):
-        connection = sqlite3.connect("amity.db")
+    def save_state(self, database="amity.db"):
+        database = database if database else "amity.db"
+        connection = sqlite3.connect(database)
         cc = connection.cursor()
         cc.execute('''DROP TABLE IF EXISTS room''')
         cc.execute('''CREATE TABLE room( room_id INTEGER , room_name text, room_capacity INTEGER , room_type text, allocations text )''')
@@ -280,46 +295,69 @@ class Amity(object):
             room_capacity = room.room_capacity
             room_type = room.room_type
             for person in room.room_members:
-                allocations += person.person_id + ","
+                allocations += person.first_name + " " + person.last_name + "," + " "
             cc.execute("INSERT INTO room (room_id, room_name, room_capacity, room_type, allocations) VALUES (?,?,?,?,?)",
                          (room_id, room_name, room_capacity, room_type, allocations))
 
         cc.execute('''DROP TABLE IF EXISTS person''')
         cc.execute(
-            '''CREATE TABLE person(person_id INTEGER , first_name text, last_name text , person_type text, wants_accomodation text )''')
+            '''CREATE TABLE person(person_id INTEGER , first_name , last_name text , person_type text, wants_accommodation text )''')
         for person in self.people:
             person_id = person.person_id
             first_name = person.first_name
             last_name = person.last_name
             person_type = person.person_type
             wants_accommodation = person.wants_accommodation
-            cc.execute(
-                "INSERT INTO person (person_id, first_name, last_name, person_type, wants_accommodation) VALUES (?,?,?,?,?)",
+            cc.execute("INSERT INTO person (person_id, first_name, last_name, person_type, wants_accommodation) VALUES (?,?,?,?,?)",
                 (person_id, first_name, last_name, person_type, wants_accommodation))
 
-        cc.execute('''DROP TABLE IF EXISTS waiting_list''')
-        cc.execute(
-            '''CREATE TABLE waiting_list( person_id, first_name, last_name )''')
+        cc.execute("""DROP TABLE IF EXISTS waiting_list""")
+        cc.execute("""CREATE TABLE waiting_list
+                             (id INTEGER PRIMARY KEY UNIQUE,
+                             office_waiting_list INTEGER, living_space_waiting_list INTEGER)""")
         for person in self.office_waiting_list:
-            office_waiting_list = ""
-            person_id = person.person_id
-            first_name = person.first_name
-            last_name = person.last_name
-            curs.execute("INSERT INTO unallocated (office_waiting_list,living_space_waiting_list) VALUES (?,?)",
+            person = person.person_id
+            cc.execute("INSERT INTO waiting_list (office_waiting_list,living_space_waiting_list) VALUES (?,?)",
                          (person, 0))
-
         for person in self.living_space_waiting_list:
-            living_space_waiting_list = ""
-            person_id = person.person_id
-            first_name = person.first_name
-            last_name = person.last_name
-            curs.execute("INSERT INTO unallocated (office_waiting_list,living_space_waiting_list) VALUES (?,?)",
-                         (person, 0))
+            person = person.person_id
+            cc.execute("INSERT INTO waiting_list (office_waiting_list,living_space_waiting_list) VALUES (?,?)",
+                         (0, person))
 
         connection.commit()
         connection.close()
-        print("Data successfully saved to database!")
+        return "Data successfully saved to database!"
 
-    def load_state(self):
-        pass
+    def load_state(self, database="amity.db"):
+        database = database if database else "amity.db"
+        connection = sqlite3.connect(database)
+        cc = connection.cursor()
+        cc.execute("SELECT * FROM person")
+        people = cc.fetchall()
+        for person in people:
+            if person[2] == 'staff':
+                staff = Staff(person[1], person[2], person[3])
+                staff.id = person[0]
+                self.people.append(staff)
+
+            else:
+                fellow = Fellow(person[1], person[2], person[3])
+                fellow.id = person[0]
+                self.people.append(fellow)
+
+        cc.execute("SELECT * FROM room")
+        rooms = cc.fetchall()
+        for room in rooms:
+            if room[2] == 6:
+                office = Office(room[1], room[3])
+                office.id = room[0]
+                self.rooms.append(office)
+            else:
+                living_space = LivingSpace(room[1], room[3])
+                living_space.id = room[0]
+                self.rooms.append(living_space)
+        connection.commit()
+        connection.close()
+        print("Data successfully loaded to amity!")
+
 
