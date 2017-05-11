@@ -226,6 +226,7 @@ class Amity(object):
                         wants_accommodation = "N"
                     self.add_person(first_name, last_name, person_type, wants_accommodation)
                     print("\n")
+                    return "Data successfully loaded to amity!"
         except IOError:
             print("File not found")
 
@@ -233,6 +234,7 @@ class Amity(object):
         allocations = ""
         for room in self.rooms:
             if len(room.room_members) != 0:
+                allocations += "These are the rooms and there allocations"
                 allocations += "\n"
                 allocations += room.room_name
                 allocations += "\n"
@@ -250,12 +252,15 @@ class Amity(object):
         if args:
             with open(args, "w") as allocated_file:
                 allocated_file.write(allocations)
+                allocations += "Data has been dumped to file"
+        return allocations
 
     def print_unallocated(self, args=None):
         un_allocations = ""
         if len(self.waiting_list) == 0:
             un_allocations += "There are no unallocated people"
         elif len(self.waiting_list) != 0:
+            un_allocations += "These are the people in the waiting list"
             un_allocations += "Office waiting list\n"
             un_allocations += "---------------------------------------\n"
             for person in self.office_waiting_list:
@@ -269,6 +274,8 @@ class Amity(object):
         if args:
             with open(args, "w") as unallocated_file:
                 unallocated_file.write(un_allocations)
+                un_allocations += "Data has been dumped to file"
+        return un_allocations
 
     def print_room(self, room):
         if room in [i.room_name for i in self.rooms]:
