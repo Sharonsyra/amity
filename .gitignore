@@ -1,8 +1,10 @@
 .DS_Store
 .idea/
 *.pyc
-amity
+amity.db
 app/allocations.txt
 app/unallocated.txt
 allocations.txt
 unallocated.txt
+database_setup.py
+
