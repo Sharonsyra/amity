@@ -146,6 +146,30 @@ class Amity(object):
             if person in [p for p in room.room_members]:
                 return room
 
+    def allocate(self):
+        allocate = ""
+        if len([room_object for room_object in self.offices if
+                len(room_object.room_members) < room_object.room_capacity]):
+            for person in self.office_waiting_list:
+                office_allocated = random.choice([room for room in
+                                                  self.offices if
+                                                  len(room.room_members) <
+                                                  room.room_capacity])
+                office_allocated.room_members.append(person)
+                allocate += "{} {} of id {} has been allocated {}""\"" \
+                            "".format(person.first_name, person.last_name,
+                                      person.person_id, room)
+
+            for person in self.living_space_waiting_list:
+                living_space_allocated = random.choice([room for room in
+                                                        self.offices if
+                                                        len(room.room_members)
+                                                        < room.room_capacity])
+                living_space_allocated.room_members.append(person)
+                allocate += "{} {} of {} has been allocated {}""\"" \
+                            "".format(person.first_name, person.last_name,
+                                      person.person_id, room)
+
     def reallocate_person(self, person_identifier, new_room):
         person = self.person_object(person_identifier)
         """Check if person identifier exists"""
@@ -179,17 +203,6 @@ class Amity(object):
                             person.first_name, person.last_name, person_identifier, old_living_space, new_room))
                         return "{} {} of id {} has been reallocated from {} to {}".format(
                             person.first_name, person.last_name, person_identifier, old_living_space, new_room)
-                    else:
-                        if person in self.living_space_waiting_list:
-                            new_rm.room_members.append(person)
-                            print("{} {} of id {} has been allocated to {}".format(person.first_name,
-                                                                                   person.last_name,
-                                                                                   person_identifier, new_room))
-                            return "{} {} of id {} has been allocated to {}".format(person.first_name,
-                                                                                   person.last_name,
-                                                                                   person_identifier, new_room)
-                        else:
-                            pass
 
             """Office reallocation"""
             if new_rm in self.offices:
@@ -200,15 +213,7 @@ class Amity(object):
                         person.first_name, person.last_name, person_identifier, old_office, new_room))
                     return "{} {} of id {} has been reallocated from {} to {}".format(
                         person.first_name, person.last_name, person_identifier, old_office, new_room)
-                else:
-                    if person in self.office_waiting_list:
-                        new_rm.room_members.append(person)
-                        print("{} {} of id {} has been allocated to {}".format(
-                            person.first_name, person.last_name, person_identifier, new_room))
-                        return "{} {} of id {} has been allocated to {}".format(
-                            person.first_name, person.last_name, person_identifier, new_room)
-                    else:
-                        pass
+        
         else:
             print("Sorry the person identifier does not exist in the system")
             return "Sorry the person identifier does not exist in the system"
@@ -393,5 +398,3 @@ class Amity(object):
         connection.commit()
         connection.close()
         print("Data successfully loaded to amity!")
-
-

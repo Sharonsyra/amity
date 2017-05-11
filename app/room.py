@@ -1,7 +1,8 @@
 class Room(object):
     """ super class room """
 
-    def __init__(self, room_name, room_capacity=None, room_type=None, room_members=[]):
+    def __init__(self, room_name, room_capacity=None, room_type=None,
+                 room_members=[]):
         self.room_id = id(self)
         self.room_name = room_name
         self.room_capacity = room_capacity
@@ -9,5 +10,4 @@ class Room(object):
         self.room_members = room_members
 
     def __repr__(self):
-        return "<Room %s>" % self.room_name
-
+        return "<Room {}>".format(self.room_name)

@@ -1,8 +1,8 @@
 """
-
 Usage:
     amity create_room (living_space|office) <room_name>...
-    amity add_person <first_name> <last_name> (fellow|staff) [<wants_accommodation>]
+    amity add_person <first_name> <last_name> (fellow|staff)
+    [<wants_accommodation>]
     amity print_room <room_name>
     amity print_unallocated [--file=text_file]
     amity print_allocations [--file=text_file]
@@ -85,7 +85,8 @@ class Amity(cmd.Cmd):
 
     @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person <first_name> <last_name> (fellow|staff) [<wants_accommodation>]"""
+        """Usage: add_person <first_name> <last_name> (fellow|staff)
+        [<wants_accommodation>]"""
         person_type = None
         if args["fellow"]:
             person_type = "fellow"
@@ -93,7 +94,8 @@ class Amity(cmd.Cmd):
             person_type = "staff"
         first_name = args["<first_name>"]
         last_name = args["<last_name>"]
-        amity.add_person(first_name, last_name, person_type, args["<wants_accommodation>"])
+        amity.add_person(first_name, last_name, person_type, args
+                         ["<wants_accommodation>"])
 
     @docopt_cmd
     def do_print_room(self, args):
