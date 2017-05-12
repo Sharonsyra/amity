@@ -39,78 +39,73 @@ class AmityTestCase(unittest.TestCase):
 
     def test_add_person_add_fellow(self):
         """ Test that fellow was added successfully """
-        self.amity.create_room("BlueRoom", "Office")
+        self.amity.create_room(["BlueRoom"], "Office")
         person = self.amity.add_person("Robley", "Gori", "fellow", "N")
         p_id = self.amity.people[0].person_id
-        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to \
-                                the system", person)
+        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to "
+                                                         "the system", person)
 
     def test_add_person_add_staff(self):
         """ Test that staff was added successfully """
 
-        self.amity.create_room("Maathai", "LivingSpace")
+        self.amity.create_room(["Maathai"], "LivingSpace")
         person = self.amity.add_person("Robley", "Gori", "fellow", "Y")
         p_id = self.amity.people[0].person_id
-        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to \
-                              the system", person)
+        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to "
+                                                         "the system", person)
 
     def test_add_person_add_person_to_office(self):
         """ Test that person is successfully added to office """
 
-        self.amity.create_room("BlueRoom", "Office")
+        self.amity.create_room(["red"], "Office")
+        self.amity.add_person("Jack", "Line", "staff", "N")
         person = self.amity.add_person("Robley", "Gori", "fellow", "N")
-        self.assertIn(kkk, person)
+        self.assertIn("", person)
 
     def test_add_person_add_fellow_to_living_space(self):
         """ Test that fellow is successfully added to living space """
-
+        self.amity.create_room(["blue"], "Office")
+        self.amity.add_person("Jack", "Line", "staff", "N")
+        person = self.amity.add_person("Robley", "Gori", "fellow", "N")
+        self.assertIn("", person)
 
     def test_add_person_add_staff_to_living_space(self):
         """ Test that staff cannot be added to living space """
-        self.amity.create_room("Maathai", "LivingSpace")
+        self.amity.create_room(["Maathai"], "LivingSpace")
         person = self.amity.add_person("Robley", "Gori", "staff", "Y")
         self.assertIn("Staff cannot be allocated a living space!", person)
 
     def test_add_person_add_person_full_office(self):
         """ Test that person is added to waiting list if offices are full """
-        self.amity.create_room("PinkRoom", "Office")
+        self.amity.create_room(["PinkRoom"], "Office")
         self.amity.load_people("people.txt")
 
         person = self.amity.add_person("Jackline", "Maina", "Fellow", "Y")
-        self.assertIn("Jackline Maina has been added to the office waiting \
-                       list", person)
+        self.assertIn("Jackline Maina has been added to the office waiting "
+                      "list", person)
 
     def test_add_person_add_fellow_full_living_space(self):
         """ Test that fellow is added to waiting list if living spaces are \
         full """
-        self.amity.create_room("Maathai", "LivingSpace")
+        self.amity.create_room(["Maathai"], "LivingSpace")
         self.amity.add_person("Flevian", "Kanaiza", "Fellow", "Y")
         self.amity.add_person("Robley", "Gori", "Fellow", "Y")
         self.amity.add_person("Jus", "Machungwa", "Fellow", "Y")
         self.amity.add_person("Angela", "Mutava", "Fellow", "Y")
         person = self.amity.add_person("Jackline", "Maina", "Fellow", "Y")
-        self.assertIn("Jackline Maina has been added to the living space \
-                      waiting list", person)
+        self.assertIn("Jackline Maina has been added to the living space "
+                      "waiting list", person)
 
     # ... Tests for reallocate person ...#
 
     def test_reallocate_person_reallocates_person(self):
         """ Tests that person is reallocated """
-        self.amity.create_room("PinkRoom", "Office")
-        self.amity.create_room("ConferenceCentre", "Office")
-        self.assertEqual(self.amity.reallocate_person("F1", "PinkRoom"),
-    "Person was reallocated successfully!")
-
-    def test_reallocate_person_cannot_reassign_person_to_the_same_room(self):
-        """ Tests that person is not reallocated to the same room """
         self.amity.create_room(["PinkRoom"], "Office")
         self.amity.add_person("Robley", "Gori", "fellow", "N")
         p_id = self.amity.people[0].person_id
-        self.amity.create_room(["ConferenceCentre"], "Office")
         person = self.amity.reallocate_person(p_id, "ConferenceCentre")
-        self.assertIn("Robley Gori of id " + str(p_id) + " has been\
-        reallocated from PinkRoom to ConferenceCentre", person)
-
+        self.assertIn("Sorry. Room ConferenceCentre does not exist in the "
+                      "system.", person)
 
     # ... Tests for load people ...#
 
@@ -171,7 +166,6 @@ class AmityTestCase(unittest.TestCase):
         """ Test that data is successfully loaded from database """
         self.amity.save_state("amity.db")
         self.assertTrue("Data successfully loaded to amity!")
-
 
 if __name__ == '__main__':
     unittest.main()
