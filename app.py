@@ -7,9 +7,10 @@ Usage:
     amity print_unallocated [--file=text_file]
     amity print_allocations [--file=text_file]
     amity reallocate_person <person_id> <new_room>
+    amity allocate
     amity save_state [--db=sqlite_database]
     amity load_state <db>
-    amity load_state <text_file>
+    amity load_people <text_file>
     amity print_person_id
     amity (-i | --interactive)
     amity (-h | --help | --version)
@@ -118,6 +119,11 @@ class Amity(cmd.Cmd):
             print(args["--file"])
             print(amity.print_allocations(args["--file"]))
         amity.print_allocations()
+
+    @docopt_cmd
+    def do_allocate(self, args):
+        """Usage: allocate"""
+        amity.allocate()
 
     @docopt_cmd
     def do_reallocate_person(self, args):

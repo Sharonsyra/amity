@@ -39,7 +39,6 @@ class AmityTestCase(unittest.TestCase):
 
     def test_add_person_add_fellow(self):
         """ Test that fellow was added successfully """
-
         self.amity.create_room("BlueRoom", "Office")
         person = self.amity.add_person("Robley", "Gori", "fellow", "N")
         p_id = self.amity.people[0].person_id
@@ -49,26 +48,22 @@ class AmityTestCase(unittest.TestCase):
     def test_add_person_add_staff(self):
         """ Test that staff was added successfully """
 
-        self.amity.add_person("Robley", "Gori", "staff", "Y")
-        length_of_staff = len(self.amity.fellows)
-        self.assertEqual(len(self.amity.fellows), length_of_staff)
+        self.amity.create_room("Maathai", "LivingSpace")
+        person = self.amity.add_person("Robley", "Gori", "fellow", "Y")
+        p_id = self.amity.people[0].person_id
+        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to \
+                              the system", person)
 
     def test_add_person_add_person_to_office(self):
         """ Test that person is successfully added to office """
 
         self.amity.create_room("BlueRoom", "Office")
         person = self.amity.add_person("Robley", "Gori", "fellow", "N")
-        p_id = self.amity.people[0].person_id
-        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to \
-                        the system", person)
+        self.assertIn(kkk, person)
 
     def test_add_person_add_fellow_to_living_space(self):
         """ Test that fellow is successfully added to living space """
-        self.amity.create_room("Maathai", "LivingSpace")
-        person = self.amity.add_person("Robley", "Gori", "fellow", "Y")
-        p_id = self.amity.people[0].person_id
-        self.assertIn("Robley Gori of id " + str(p_id) + " has been added to \
-                      the system", person)
+
 
     def test_add_person_add_staff_to_living_space(self):
         """ Test that staff cannot be added to living space """
