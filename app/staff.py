@@ -9,4 +9,3 @@ class Staff(Person):
 
     def __repr__(self):
         return "Staff {} {}".format(self.first_name, self.last_name)
-
