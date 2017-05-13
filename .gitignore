@@ -7,4 +7,6 @@ app/unallocated.txt
 allocations.txt
 unallocated.txt
 database_setup.py
+*.txt
+*.db
 

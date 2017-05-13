@@ -321,6 +321,7 @@ class Amity(object):
 
     def load_people(self, txt_file=None):
         """Function to load people from a text file"""
+        txt_file = './files/' + txt_file
         try:
             try:
                 with open(txt_file, 'r') as person_file:
@@ -353,7 +354,7 @@ class Amity(object):
                 allocations += "\n"
                 allocations += "---------------------------------------\n"
                 for person in room.room_members:
-                    allocations += "{}\n".format(person)
+                    allocations += "{} {}\n".format(person, person.person_id)
         if not self.rooms:
             allocations += "There are no rooms in the system. Create rooms"\
                            " and add people to display the allocations"
@@ -361,7 +362,8 @@ class Amity(object):
         print(allocations)
 
         if args:
-            with open(args, "w") as allocated_file:
+            txt = './files/'+args
+            with open(txt, "w") as allocated_file:
                 allocated_file.write(allocations)
                 allocations += "Data has been dumped to file"
         return allocations
@@ -377,15 +379,16 @@ class Amity(object):
             un_allocations += "Office waiting list\n"
             un_allocations += "---------------------------------------\n"
             for person in self.office_waiting_list:
-                un_allocations += "{0} {1}\n".format(person, person.person_id)
+                un_allocations += "{} {}\n".format(person, person.person_id)
             un_allocations += "Living Space waiting list\n"
             un_allocations += "---------------------------------------\n"
             for person in self.living_space_waiting_list:
-                un_allocations += "{0} {1}\n".format(person, person.person_id)
+                un_allocations += "{} {}\n".format(person, person.person_id)
         print(un_allocations)
 
         if args:
-            with open(args, "w") as unallocated_file:
+            txt = './files/' + args
+            with open(txt, "w") as unallocated_file:
                 unallocated_file.write(un_allocations)
                 un_allocations += "Data has been dumped to file"
         return un_allocations
@@ -398,13 +401,14 @@ class Amity(object):
             for r in self.rooms:
                 if room in r.room_name:
                     for person in r.room_members:
-                        print(person, person.person_id)
+                        print person, person.person_id
         else:
             print("The room does not exist in the system")
         return self
 
     def save_state(self, database="amity.db"):
         """Function to save people to a database"""
+        database = './files/' + database
         database = database if database else "amity.db"
         connection = sqlite3.connect(database)
         cc = connection.cursor()
@@ -472,7 +476,7 @@ last_name text, person_type text, wants_accommodation text )''')
         print "Data successfully saved to database!"
 
     def load_state(self, database=None):
-        os.path.join(dir, '/files')
+        database = './files/' + database
         """Function to load people from a database"""
         try:
             db = database if database else "amity.db"
@@ -492,6 +496,7 @@ last_name text, person_type text, wants_accommodation text )''')
                     fellow.person_id = person[0]
                     self.people.append(fellow)
                     self.fellows.append(fellow)
+
             cc.execute("SELECT * FROM room")
             rooms = cc.fetchall()
             for room in rooms:
@@ -535,8 +540,5 @@ last_name text, person_type text, wants_accommodation text )''')
             connection.commit()
             connection.close()
             print("Data successfully loaded to amity!")
-        except MyException, e:
-            logging.info('No records found')
-        except exc.SQLAlchemyError, e:
-            logging.exception('Some problem occurred')
-
+        except Exception as error:
+            print(error)

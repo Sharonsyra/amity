@@ -1,5 +1,8 @@
+from abc import ABCMeta
+
 class Room(object):
     """ super class room """
+    __metaclass__ = ABCMeta
 
     def __init__(self, room_name, room_capacity=None, room_type=None,
                  room_members=[]):

@@ -1,5 +1,8 @@
+from abc import ABCMeta
+
 class Person(object):
     """ Class person adds people to amity """
+    __metaclass__ = ABCMeta
 
     def __init__(self, first_name, last_name, person_type=None,
                  wants_accommodation=""):
