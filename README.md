@@ -43,3 +43,6 @@ $ python app.py -i
 
 ### Major Libraries Used
 - [SQLite](https://docs.python.org/2/library/sqlite3.html) - SQLite is a C library that provides a lightweight disk-based database that doesn’t require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language.
+
+### Application demonstration
+- The demonstration of the application can be found [here](https://www.youtube.com/watch?v=qfrvov_FsyY&feature=youtu.be)
