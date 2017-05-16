@@ -408,7 +408,10 @@ class Amity(object):
 
     def save_state(self, database="amity.db"):
         """Function to save people to a database"""
-        database = './files/' + database
+        if database:
+            database = './files/' + database
+        else:
+            database = './files/'
         database = database if database else "amity.db"
         connection = sqlite3.connect(database)
         cc = connection.cursor()
