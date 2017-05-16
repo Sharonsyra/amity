@@ -543,5 +543,5 @@ last_name text, person_type text, wants_accommodation text )''')
             connection.commit()
             connection.close()
             print("Data successfully loaded to amity!")
-        except Exception as error:
-            print(error)
+        except NoDataFound:
+            print("Please add data to the database!")
